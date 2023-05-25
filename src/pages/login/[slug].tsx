@@ -1,8 +1,8 @@
-import {pages} from './../constants';
+import {pages} from './../../constants';
 
 import Head from 'next/head';
 
-import type {LoginPage as LoginPageProps} from '../types.d';
+import type {LoginPage as LoginPageProps} from './../../types.d';
 import type {GetStaticPaths, GetStaticProps} from 'next';
 
 export default function LoginPag(pageData: LoginPageProps) {
