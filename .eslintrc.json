@@ -32,7 +32,11 @@
 				"external",
 				"type"
 			],
-			"newlines-between": "always"
+			"newlines-between": "always",
+			"alphabetize": {
+				"order": "asc",
+				"caseInsensitive": true
+			}
 		}],
 		"max-len": "off",
 		"linebreak-style": ["warn", "windows"]

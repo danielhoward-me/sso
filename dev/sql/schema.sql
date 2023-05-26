@@ -1,9 +1,10 @@
-CREATE TYPE login_sources AS ENUM (
-	'Window'
+CREATE TYPE login_targets AS ENUM (
+	'Page',
+	'Popup'
 );
 
-CREATE TABLE IF NOT EXISTS login_targets (
+CREATE TABLE IF NOT EXISTS login_pages (
 	slug VARCHAR(255) PRIMARY KEY,
-	display_name VARCHAR(255),
-	login_source login_sources
+	page_name VARCHAR(255),
+	login_target login_targets
 );

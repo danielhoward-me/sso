@@ -1,12 +1,14 @@
-import {pages} from './../../constants';
-import db from './../../server/database';
+import db from '../../lib/database';
 
 import Head from 'next/head';
 
-import type {LoginPage as LoginPageProps} from './../../types.d';
-import type {GetStaticPaths, GetStaticProps} from 'next';
+import type {LoginPage as LoginPageProps, LoginPages} from './../../types.d';
+import type {GetServerSideProps} from 'next';
 
-export default function LoginPag(pageData: LoginPageProps) {
+let pages: LoginPages;
+const pagesPromise = db.getLoginPages().then((data) => (pages = data));
+
+export default function LoginPage(pageData: LoginPageProps) {
 	const pageTitle = `${pageData.pageName} Login`;
 	return (
 		<>
@@ -15,25 +17,24 @@ export default function LoginPag(pageData: LoginPageProps) {
 				<meta name="description" content={pageTitle}/>
 			</Head>
 			<div>
-				<h1>Login for {pageData.pageName}</h1>
+				<h1>Login to {pageData.pageName}</h1>
 			</div>
 		</>
 	);
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-	console.log(db);
-	const slugs = Object.keys(pages);
-	return {
-		paths: slugs.map((slug) => ({params: {slug}})),
-		fallback: 'blocking',
-	};
-};
+export const getServerSideProps: GetServerSideProps<{
+	pageData?: LoginPageProps;
+}> = async ({req, res}) => {
+	if (pages === undefined) await pagesPromise;
 
-export const getStaticProps: GetStaticProps = async ({params}) => {
-	const slug = params.slug as string;
+	const slug = req.url?.split('/').pop() || '';
 	const pageData = pages[slug];
-	return {
-		props: pageData,
-	};
+
+	if (pageData === undefined) {
+		res.statusCode = 404;
+		return {props: {}};
+	}
+
+	return {props: {pageData}};
 };
