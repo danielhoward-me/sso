@@ -34,6 +34,7 @@
 			],
 			"newlines-between": "always"
 		}],
-		"max-len": "off"
+		"max-len": "off",
+		"linebreak-style": ["warn", "windows"]
 	}
 }

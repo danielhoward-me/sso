@@ -1,4 +1,5 @@
 import {pages} from './../../constants';
+import db from './../../server/database';
 
 import Head from 'next/head';
 
@@ -21,6 +22,7 @@ export default function LoginPag(pageData: LoginPageProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+	console.log(db);
 	const slugs = Object.keys(pages);
 	return {
 		paths: slugs.map((slug) => ({params: {slug}})),
