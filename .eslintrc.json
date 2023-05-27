@@ -39,6 +39,7 @@
 			}
 		}],
 		"max-len": "off",
-		"linebreak-style": ["warn", "windows"]
+		"linebreak-style": ["warn", "windows"],
+		"new-cap": "off"
 	}
 }

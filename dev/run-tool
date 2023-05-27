@@ -15,7 +15,7 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
-OUT_DIR="./cache"
+OUT_DIR="$(pwd)/cache"
 FILENAME=$1
 FILENAME_TS="$1.ts"
 FILENMAE_JS="$1.js"
@@ -26,7 +26,7 @@ if [ ! -f "tools/$FILENAME_TS" ]; then
 fi
 
 echo "Compiling tool $FILENAME"
-tsc "tools/$FILENAME_TS" --outDir $OUT_DIR
+yarn tsc "$(pwd)/tools/$FILENAME_TS" --outDir $OUT_DIR
 
 echo "Setting environment variables from .env file"
 export $(grep -v '^#' ./../.env | xargs)
