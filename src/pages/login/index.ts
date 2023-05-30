@@ -1,6 +1,6 @@
 import LoginPageSlug, {getServerSideProps as getServerSidePropsSlug} from './[slug]';
 
-import type {LoginPage as LoginPageProps} from '../../types';
+import type {LoginPage as LoginPageProps} from './../../constants/loginTargets';
 import type {GetServerSideProps} from 'next';
 
 export default function LoginPage(props: {pageData: LoginPageProps}) {

@@ -1,8 +1,6 @@
-import {LoginTarget} from './../constants';
-
 import {Client} from 'pg';
 
-import type {LoginPageData, LoginPages} from './../types';
+import type {RawSession} from './../constants/session';
 import type {QueryResult} from 'pg';
 
 class Database {
@@ -60,18 +58,30 @@ class Database {
 		await this.client.end();
 	}
 
-	public async getLoginPages(): Promise<LoginPages> {
-		const res = await this.query<LoginPageData>(
-			'SELECT slug, page_name, login_target FROM login_pages'
+	public async getSession(sessionId: string): Promise<RawSession | null> {
+		if (!sessionId) return null;
+
+		const {rows} = await this.query<RawSession>(
+			'SELECT * FROM sessions WHERE id = $1',
+			[sessionId],
 		);
-		const loginPages: LoginPages = {};
-		for (const row of res.rows) {
-			loginPages[row.slug] = {
-				pageName: row.page_name,
-				loginTarget: LoginTarget[row.login_target],
-			};
-		}
-		return loginPages;
+
+		return rows[0];
+	}
+
+	// expires is the number of seconds until the session expires
+	public async createSession(sessionId: string, ip: string, maxAge: number) {
+		await this.query(
+			`INSERT INTO sessions (id, ip, expires) VALUES ($1, $2, NOW() + INTERVAL '${maxAge} seconds')`,
+			[sessionId, ip],
+		);
+	}
+
+	public async deleteSession(sessionId: string) {
+		await this.query(
+			'DELETE FROM sessions WHERE id = $1',
+			[sessionId],
+		);
 	}
 }
 

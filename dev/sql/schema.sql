@@ -1,10 +1,6 @@
-CREATE TYPE login_targets AS ENUM (
-	'Page',
-	'Popup'
-);
-
-CREATE TABLE IF NOT EXISTS login_pages (
-	slug VARCHAR(255) PRIMARY KEY,
-	page_name VARCHAR(255),
-	login_target login_targets
+CREATE TABLE IF NOT EXISTS sessions (
+	id uuid PRIMARY KEY,
+	ip inet,
+	expires timestamp,
+	user_id uuid
 );
