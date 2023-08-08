@@ -1,12 +1,12 @@
-import LoginPageSlug, {getServerSideProps as getServerSidePropsSlug} from './[slug]';
+import LoginPageSlug, {
+	getServerSideProps as getServerSidePropsSlug,
+} from './[slug]';
 
-import type {LoginPage as LoginPageProps} from './../../constants/loginTargets';
+import type {pageProps} from './[slug]';
 import type {GetServerSideProps} from 'next';
 
-export default function LoginPage(props: {pageData: LoginPageProps}) {
+export default function LoginPage(props: pageProps) {
 	return LoginPageSlug(props);
 }
 
-export const getServerSideProps: GetServerSideProps<{
-	pageData?: LoginPageProps;
-}> = getServerSidePropsSlug;
+export const getServerSideProps: GetServerSideProps<pageProps> = getServerSidePropsSlug;

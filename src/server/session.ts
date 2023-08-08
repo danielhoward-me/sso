@@ -30,7 +30,7 @@ export default async function getSession(
 	}
 
 	return {
-		user: session.user_id ? {id: session.user_id} : null,
+		userId: session.user_id,
 	};
 }
 
@@ -47,7 +47,7 @@ async function createSession(
 	});
 	res.setHeader('Set-Cookie', cookie);
 
-	return {user: null};
+	return {userId: null};
 }
 
 function getRequestIp(req: GetServerSidePropsContext['req']): string {

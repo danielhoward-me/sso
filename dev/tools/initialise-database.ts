@@ -1,4 +1,4 @@
-import db from '../../src/server/database';
+import db from './../../src/server/database';
 
 import {readFileSync} from 'fs';
 

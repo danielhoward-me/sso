@@ -41,6 +41,7 @@
 		"max-len": "off",
 		"linebreak-style": ["warn", "windows"],
 		"new-cap": "off",
-		"semi": "off"
+		"semi": "off",
+		"jsx-quotes": ["warn", "prefer-double"]
 	}
 }

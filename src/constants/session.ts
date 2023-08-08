@@ -1,5 +1,3 @@
-import type {User} from './user';
-
 export interface RawSession {
 	id: string;
 	ip: string;
@@ -8,7 +6,7 @@ export interface RawSession {
 }
 
 export interface Session {
-	user: User | null;
+	userId: string | null;
 }
 
 export const sessionCookieName = 'session';

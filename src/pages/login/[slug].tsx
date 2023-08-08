@@ -1,19 +1,18 @@
-import loginPages from './../../constants/loginTargets';
+import loginPages from './../../server/login-pages/pages';
 import getSession from './../../server/session';
 
 import Head from 'next/head';
 
-import type {LoginPage as LoginPageProps} from './../../constants/loginTargets';
 import type {Session} from './../../constants/session';
 import type {GetServerSideProps} from 'next';
 
-interface pageProps {
-	pageData: LoginPageProps;
+export interface pageProps {
+	pageName: string;
 	session: Session;
 }
 
-export default function LoginPage({pageData, session}: pageProps) {
-	const pageTitle = `${pageData.pageName ? `${pageData.pageName} ` : ''}Login`;
+export default function LoginPage({pageName, session}: pageProps) {
+	const pageTitle = `${pageName ? `${pageName} ` : ''}Login`;
 	return (
 		<>
 			<Head>
@@ -21,7 +20,7 @@ export default function LoginPage({pageData, session}: pageProps) {
 				<meta name="description" content={pageTitle}/>
 			</Head>
 			<div>
-				<h1>Login{pageData.pageName ? ` to ${pageData.pageName}` : ''}</h1>
+				<h1>Login{pageName ? ` to ${pageName}` : ''}</h1>
 				{JSON.stringify(session)}
 			</div>
 		</>
@@ -39,5 +38,10 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async ({req, re
 
 	const session = await getSession(req, res);
 
-	return {props: {pageData, session}};
+	if (session.userId !== null) {
+		pageData.onSuccessfulLogin();
+		return {redirect: {destination: '/', permanent: false}};
+	}
+
+	return {props: {pageName: pageData.name, session}};
 };
