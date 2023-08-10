@@ -38,10 +38,10 @@ export const getServerSideProps: GetServerSideProps<pageProps> = async ({req, re
 
 	const session = await getSession(req, res);
 
-	if (session.userId !== null) {
-		pageData.onSuccessfulLogin();
-		return {redirect: {destination: '/', permanent: false}};
-	}
+	// if (session.user !== null) {
+	// 	pageData.onSuccessfulLogin();
+	// 	return {redirect: {destination: '/', permanent: false}};
+	// }
 
 	return {props: {pageName: pageData.name, session}};
 };

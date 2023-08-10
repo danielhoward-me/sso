@@ -1,5 +1,6 @@
 import {sessionCookieName, sessionCookieMaxAge} from './../constants/session';
 import db from './database';
+import User from './user';
 
 import {serialize} from 'cookie';
 import {v4 as uuid} from 'uuid';
@@ -30,7 +31,7 @@ export default async function getSession(
 	}
 
 	return {
-		userId: session.user_id,
+		user: session.user_id ? new User(session.user_id) : null,
 	};
 }
 
@@ -47,7 +48,7 @@ async function createSession(
 	});
 	res.setHeader('Set-Cookie', cookie);
 
-	return {userId: null};
+	return {user: null};
 }
 
 function getRequestIp(req: GetServerSidePropsContext['req']): string {

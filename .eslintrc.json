@@ -41,7 +41,12 @@
 		"max-len": "off",
 		"linebreak-style": ["warn", "windows"],
 		"new-cap": "off",
-		"semi": "off",
-		"jsx-quotes": ["warn", "prefer-double"]
+		"jsx-quotes": ["warn", "prefer-double"],
+		"@typescript-eslint/no-restricted-imports": [
+			"warn",
+			{
+				"patterns": ["../*", "*types"]
+			}
+		]
 	}
 }
