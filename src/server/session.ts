@@ -1,62 +1,83 @@
-import {sessionCookieName, sessionCookieMaxAge} from './../constants/session';
+import {SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME} from './constants';
 import db from './database';
 import User from './user';
 
-import {serialize} from 'cookie';
+import {cookies as getCookies, headers as getHeaders} from 'next/headers';
 import {v4 as uuid} from 'uuid';
 
-import type {Session} from './../constants/session';
-import type {GetServerSidePropsContext} from 'next';
+import type {RawSession, Session} from './types.d';
+import type {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 
-export default async function getSession(
-	req: GetServerSidePropsContext['req'],
-	res: GetServerSidePropsContext['res']
-): Promise<Session> {
-	const sessionId = req.cookies[sessionCookieName];
-	if (!sessionId) return await createSession(req, res);
+const sessionCache: {[uuid: string]: Session} = {};
+const defaultSession = processSession();
+
+export async function loadSession() {
+	const ip = getHeaders().get('x-forwarded-for') ?? '';
+	const cookies = getCookies();
+
+	const rawSession = (
+		await loadSessionFromRequest(cookies, ip)
+	) ?? (
+		await createSession(cookies, ip)
+	);
+
+	const session = processSession(rawSession);
+	sessionCache[rawSession.id] = session;
+}
+
+async function loadSessionFromRequest(
+	cookies: ReadonlyRequestCookies,
+	ip: string
+): Promise<RawSession | null> {
+	const sessionId = cookies.get(SESSION_COOKIE_NAME)?.value;
+	if (!sessionId) return null;
 
 	const session = await db.getSession(sessionId);
-	if (!session) return await createSession(req, res);
+	if (!session) return null;
 
 	const now = new Date();
 	const expires = new Date(session.expires);
 	if (now > expires) {
 		await db.deleteSession(sessionId);
-		return await createSession(req, res);
+		return null;
 	}
 
-	const ip = getRequestIp(req);
 	if (session.ip !== ip) {
-		return await createSession(req, res);
+		return null;
 	}
 
-	return {
-		user: session.user_id ? new User(session.user_id) : null,
-	};
+	return session;
 }
 
 async function createSession(
-	req: GetServerSidePropsContext['req'],
-	res: GetServerSidePropsContext['res']
-): Promise<Session> {
+	cookies: ReadonlyRequestCookies,
+	ip: string
+): Promise<RawSession> {
 	const id = uuid();
-	const ip = getRequestIp(req);
-	await db.createSession(id, ip, sessionCookieMaxAge);
+	await db.createSession(id, ip, SESSION_COOKIE_MAX_AGE);
 
-	const cookie = serialize(sessionCookieName, id, {
-		maxAge: sessionCookieMaxAge,
-	});
-	res.setHeader('Set-Cookie', cookie);
+	// cookies.set(SESSION_COOKIE_NAME, id, {
+	// 	maxAge: SESSION_COOKIE_MAX_AGE,
+	// });
 
-	return {user: null};
+	return {
+		id,
+		ip,
+		expires: SESSION_COOKIE_MAX_AGE.toString(),
+		user_id: null,
+	};
 }
 
-function getRequestIp(req: GetServerSidePropsContext['req']): string {
-	const forwardedFor = req.headers['x-forwarded-for'];
-	if (typeof forwardedFor === 'string') return forwardedFor;
+function processSession(rawSession?: RawSession): Session {
+	return {
+		user: rawSession?.user_id ? new User(rawSession.user_id) : null,
+	};
+}
 
-	const remoteAddress = req.socket.remoteAddress;
-	if (typeof remoteAddress === 'string') return remoteAddress;
+export function getSession(): Session {
+	const cookies = getCookies();
+	const sessionId = cookies.get(SESSION_COOKIE_NAME)?.value;
+	if (!sessionId) return defaultSession;
 
-	return '';
+	return sessionCache[sessionId] ?? defaultSession;
 }

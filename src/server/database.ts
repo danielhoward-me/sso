@@ -1,7 +1,7 @@
 import {Client} from 'pg';
 
-import type {RawSession} from './../constants/session';
-import type {QueryResult} from 'pg';
+import type {RawSession} from './types.d';
+import type {QueryResult, QueryResultRow} from 'pg';
 
 class Database {
 	private client: Client = new Client({
@@ -36,7 +36,7 @@ class Database {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public async query<T>(sql: string, values?: any[]): Promise<QueryResult<T>> {
+	public async query<T extends QueryResultRow>(sql: string, values?: any[]): Promise<QueryResult<T>> {
 		if (process.env.NODE_ENV !== 'production') {
 			const sqlQuery = sql.split('\n').map((line) => '\t' + line).join('\n');
 			console.log('Querying database:');
@@ -69,7 +69,6 @@ class Database {
 		return rows[0];
 	}
 
-	// expires is the number of seconds until the session expires
 	public async createSession(sessionId: string, ip: string, maxAge: number) {
 		await this.query(
 			`INSERT INTO sessions (id, ip, expires) VALUES ($1, $2, NOW() + INTERVAL '${maxAge} seconds')`,

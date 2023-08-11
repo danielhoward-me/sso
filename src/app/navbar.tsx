@@ -1,15 +1,12 @@
+import {getSession} from './../server/session';
 
 import {ArrowTopRightOnSquareIcon} from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import type {Session} from './../constants/session';
+export default function NavBar() {
+	const session = getSession();
 
-interface Props {
-	session: Session;
-}
-
-export default function NavBar({session}: Props) {
 	const links: NavBarLinkProps[] = [
 		{
 			name: 'Home',
