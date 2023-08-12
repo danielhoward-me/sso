@@ -1,7 +1,7 @@
-import './styles/tailwind.css';
+import './../styles/tailwind.css';
 
-import {loadSession} from './../server/session';
-import NavBar from './navbar';
+import {ColourScheme} from './../constants';
+import NavBar, {getColourScheme} from './navBar';
 
 import type {Metadata} from 'next';
 
@@ -28,11 +28,9 @@ export default async function RootLayout({
 }: {
 	children: React.ReactNode
 }) {
-	await loadSession();
-
 	return (
-		<html lang="en">
-			<body className="dark:bg-gray-800 bg-white dark:text-white">
+		<html lang="en" className={getColourScheme() === ColourScheme.DARK ? 'dark' : ''}>
+			<body className="dark:bg-gray-800 dark:text-white bg-white">
 				<NavBar/>
 				<main>
 					{children}

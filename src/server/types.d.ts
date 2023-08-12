@@ -10,3 +10,8 @@ export interface RawSession {
 export interface Session {
 	user: User | null;
 }
+
+export interface SessionApiRequestBody {
+	sessionId: string | undefined;
+	ip: string;
+}

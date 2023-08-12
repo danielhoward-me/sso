@@ -37,7 +37,7 @@ class Database {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public async query<T extends QueryResultRow>(sql: string, values?: any[]): Promise<QueryResult<T>> {
-		if (process.env.NODE_ENV !== 'production') {
+		if (process.env.NODE_ENV !== 'production' && process.env.LOG_QUERIES === 'true') {
 			const sqlQuery = sql.split('\n').map((line) => '\t' + line).join('\n');
 			console.log('Querying database:');
 			console.log(sqlQuery);

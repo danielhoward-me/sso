@@ -1,13 +1,21 @@
+import {ColourScheme, CookieName, DEFAULT_COLOUR_SCHEME} from './../constants';
 import {getSession} from './../server/session';
+import {ColourSchemeButton} from './colourSchemeHandler';
+import {NavBarLink} from './navBarElements';
 
-import {ArrowTopRightOnSquareIcon} from '@heroicons/react/24/solid';
+import {cookies as getCookies} from 'next/headers';
 import Image from 'next/image';
-import Link from 'next/link';
+
+interface Link {
+	name: string;
+	href: string;
+	external?: boolean;
+}
 
 export default function NavBar() {
 	const session = getSession();
 
-	const links: NavBarLinkProps[] = [
+	const links: Link[] = [
 		{
 			name: 'Home',
 			href: '/',
@@ -38,11 +46,15 @@ export default function NavBar() {
 						</div>
 						<div className="hidden sm:ml-6 sm:block">
 							<div className="flex space-x-4">
-								{links.map(NavBarLink)}
+								{links.map((link) => (
+									<NavBarLink key={link.href} {...link}/>
+								))}
 							</div>
 						</div>
 					</div>
 					<div className="hidden sm:flex flex-1 justify-end">
+						<ColourSchemeButton colourScheme={getColourScheme()}/>
+
 						{session?.user ? (
 							<NavBarLink name="Log out" href="/api/logout"/>
 						) : (
@@ -55,26 +67,8 @@ export default function NavBar() {
 	);
 }
 
-interface NavBarLinkProps {
-	name: string;
-	href: string;
-	external?: boolean;
-}
-
-function NavBarLink(link: NavBarLinkProps) {
-	return (
-		<Link
-			href={link.href}
-			key={link.href}
-			target={link.external ? '_blank' : undefined}
-			className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
-		>
-			<div className="inline-flex items-baseline">
-				{link.name}
-				{link.external && (
-					<ArrowTopRightOnSquareIcon className="self-center w-5 h-5 pl-1"/>
-				)}
-			</div>
-		</Link>
-	);
+export function getColourScheme(): ColourScheme {
+	const cookies = getCookies();
+	const colourSchemeCookie = parseInt(cookies.get(CookieName.COLOUR_SCHEME)?.value ?? '-1');
+	return colourSchemeCookie in ColourScheme ? colourSchemeCookie : DEFAULT_COLOUR_SCHEME;
 }

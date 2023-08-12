@@ -14,7 +14,7 @@ export default class LoginPage {
 		this.loginLocation = loginLocation;
 	}
 
-	public async onSuccessfulLogin(): Promise<void> {
+	public onSuccessfulLogin(): void {
 		throw new Error('Not implemented');
 	}
 }

@@ -1,35 +1,36 @@
-import {SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME} from './constants';
+import {CookieName, SESSION_COOKIE_MAX_AGE} from './../constants';
 import db from './database';
 import User from './user';
 
-import {cookies as getCookies, headers as getHeaders} from 'next/headers';
+import {cookies as getCookies} from 'next/headers';
 import {v4 as uuid} from 'uuid';
 
 import type {RawSession, Session} from './types.d';
-import type {ReadonlyRequestCookies} from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 
 const sessionCache: {[uuid: string]: Session} = {};
 const defaultSession = processSession();
 
-export async function loadSession() {
-	const ip = getHeaders().get('x-forwarded-for') ?? '';
-	const cookies = getCookies();
-
+// Called from the session API to load a session into the cache
+export async function loadSessionFromApi(
+	sessionId: string | undefined,
+	ip: string
+): Promise<RawSession> {
 	const rawSession = (
-		await loadSessionFromRequest(cookies, ip)
+		await loadSessionFromId(sessionId, ip)
 	) ?? (
-		await createSession(cookies, ip)
+		await createSession(ip)
 	);
 
 	const session = processSession(rawSession);
 	sessionCache[rawSession.id] = session;
+
+	return rawSession;
 }
 
-async function loadSessionFromRequest(
-	cookies: ReadonlyRequestCookies,
+async function loadSessionFromId(
+	sessionId: string | undefined,
 	ip: string
 ): Promise<RawSession | null> {
-	const sessionId = cookies.get(SESSION_COOKIE_NAME)?.value;
 	if (!sessionId) return null;
 
 	const session = await db.getSession(sessionId);
@@ -49,16 +50,13 @@ async function loadSessionFromRequest(
 	return session;
 }
 
-async function createSession(
-	cookies: ReadonlyRequestCookies,
-	ip: string
-): Promise<RawSession> {
-	const id = uuid();
-	await db.createSession(id, ip, SESSION_COOKIE_MAX_AGE);
+async function createSession(ip: string): Promise<RawSession> {
+	let id = '';
+	while (id === '' || await db.getSession(id)) {
+		id = uuid();
+	}
 
-	// cookies.set(SESSION_COOKIE_NAME, id, {
-	// 	maxAge: SESSION_COOKIE_MAX_AGE,
-	// });
+	await db.createSession(id, ip, SESSION_COOKIE_MAX_AGE);
 
 	return {
 		id,
@@ -76,7 +74,7 @@ function processSession(rawSession?: RawSession): Session {
 
 export function getSession(): Session {
 	const cookies = getCookies();
-	const sessionId = cookies.get(SESSION_COOKIE_NAME)?.value;
+	const sessionId = cookies.get(CookieName.SESSION)?.value;
 	if (!sessionId) return defaultSession;
 
 	return sessionCache[sessionId] ?? defaultSession;

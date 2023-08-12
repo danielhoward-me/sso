@@ -2,7 +2,7 @@ import loginPages from './../../../server/login-pages/pages';
 import {getSession} from './../../../server/session';
 
 import Head from 'next/head';
-import {notFound, redirect} from 'next/navigation';
+import {notFound} from 'next/navigation';
 
 export interface Props {
 	params: {
@@ -19,7 +19,7 @@ export default function LoginPage({params}: Props) {
 
 	if (session.user) {
 		pageData.onSuccessfulLogin();
-		return redirect('/');
+		return;
 	}
 
 	const pageName = pageData.name;
