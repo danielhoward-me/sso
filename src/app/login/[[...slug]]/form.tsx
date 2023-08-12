@@ -17,6 +17,7 @@ export default function LoginForm() {
 					type="email"
 					required
 					maxLength={256}
+					tabIndex={1}
 				/>
 			</div>
 			<div className="mb-8">
@@ -28,6 +29,7 @@ export default function LoginForm() {
 					placeholder="Password"
 					type="password"
 					required
+					tabIndex={2}
 				/>
 			</div>
 			<Button type="submit">Log in</Button>

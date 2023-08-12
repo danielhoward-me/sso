@@ -24,7 +24,7 @@ export function TextInput(props: TextInputProps) {
 		<div className="text-left">
 			<div className="flex">
 				<label htmlFor={props.id} className="text-gray-800 dark:text-gray-300 text-md font-bold justify-start">
-					{props.label}
+					{props.label} {props.required && <span className="text-red-500">*</span>}
 				</label>
 				{props.labelLink && (
 					<div className="ml-auto text-sm">

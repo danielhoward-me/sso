@@ -46,7 +46,7 @@ interface ButtonProps {
 
 export function NavBarButton(props: ButtonProps) {
 	return (
-		<div onClick={props.onClick} className="hover:cursor-pointer">
+		<div tabIndex={0} onClick={props.onClick} className="hover:cursor-pointer">
 			<NavBarElement>
 				{props.children}
 			</NavBarElement>
