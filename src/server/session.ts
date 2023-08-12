@@ -72,10 +72,19 @@ function processSession(rawSession?: RawSession): Session {
 	};
 }
 
+export async function saveSession(userId: string): Promise<void> {
+	const sessionId = getSessionId();
+	await db.updateSession(sessionId, userId);
+}
+
 export function getSession(): Session {
 	const cookies = getCookies();
 	const sessionId = cookies.get(CookieName.SESSION)?.value;
 	if (!sessionId) return defaultSession;
 
 	return sessionCache[sessionId] ?? defaultSession;
+}
+export function getSessionId(): string {
+	const cookies = getCookies();
+	return cookies.get(CookieName.SESSION)?.value ?? '';
 }

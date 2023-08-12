@@ -9,8 +9,6 @@ export async function POST(req: NextRequest) {
 	const authentication = req.headers.get('authorization') ?? '';
 	const apiKey = authentication.replace(/^Bearer /, '');
 
-	// Don't make any indication that this endpoint exists
-	// as it's only used internally
 	if (apiKey !== process.env.SESSION_API_KEY) return NextResponse.json({error: 'Unauthorized'}, {status: 401});
 
 	const partialBody = await req.json() as Partial<SessionApiRequestBody>;

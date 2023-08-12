@@ -6,7 +6,7 @@ import {cookies as getCookies} from 'next/headers';
 
 export default function NavBar() {
 	return (
-		<nav className="shadow-lg dark:bg-gray-800">
+		<nav className="shadow-lg dark:bg-gray-800 bg-white">
 			<NavBarContent
 				colourScheme={getColourScheme()}
 				session={getSession()}

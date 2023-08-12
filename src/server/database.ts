@@ -1,6 +1,6 @@
 import {Client} from 'pg';
 
-import type {RawSession} from './types.d';
+import type {RawSession, RawUser, UserLoginData} from './types.d';
 import type {QueryResult, QueryResultRow} from 'pg';
 
 class Database {
@@ -58,9 +58,7 @@ class Database {
 		await this.client.end();
 	}
 
-	public async getSession(sessionId: string): Promise<RawSession | null> {
-		if (!sessionId) return null;
-
+	public async getSession(sessionId: string): Promise<RawSession | undefined> {
 		const {rows} = await this.query<RawSession>(
 			'SELECT * FROM sessions WHERE id = $1',
 			[sessionId],
@@ -81,6 +79,31 @@ class Database {
 			'DELETE FROM sessions WHERE id = $1',
 			[sessionId],
 		);
+	}
+
+	public async updateSession(sessionId: string, userId: string) {
+		await this.query(
+			'UPDATE sessions SET user_id = $1 WHERE id = $2',
+			[userId, sessionId],
+		);
+	}
+
+	public async getUser(userId: string): Promise<RawUser> {
+		const {rows} = await this.query<RawUser>(
+			'SELECT id, username, email, created, updated FROM users WHERE id = $1',
+			[userId],
+		);
+
+		return rows[0];
+	}
+
+	public async getUserLoginData(email: string): Promise<UserLoginData> {
+		const {rows} = await this.query<UserLoginData>(
+			`SELECT id, password FROM users WHERE email = $1`,
+			[email],
+		);
+
+		return rows[0];
 	}
 }
 

@@ -15,7 +15,9 @@ import type {Session} from './../server/types.d';
 export interface LinkProps {
 	name: string;
 	href: string;
+	border?: boolean;
 	external?: boolean;
+	hide?: 'mobile' | 'desktop';
 }
 
 export function NavBarLink(props: LinkProps) {
@@ -23,6 +25,7 @@ export function NavBarLink(props: LinkProps) {
 		<Link
 			href={props.href}
 			target={props.external ? '_blank' : undefined}
+			className={`${props.border ? 'border-2 rounded-md border-current' : ''} ${props.hide === 'mobile' ? 'hidden sm:block' : ''} ${props.hide === 'desktop' ? 'block sm:hidden' : ''}`}
 		>
 			<NavBarElement>
 				<div className="inline-flex items-baseline">
@@ -119,13 +122,16 @@ export function NavBarContent({
 							</div>
 						</div>
 					</div>
-					<div className="absolute right-0 flex flex-1 items-center">
+					<div className="absolute right-0 flex flex-1 items-center space-x-4">
 						<ColourSchemeButton colourScheme={colourScheme}/>
 
 						{session?.user ? (
 							<NavBarLink name="Log out" href="/api/logout"/>
 						) : (
-							<NavBarLink name="Log in" href="/login"/>
+							<>
+								<NavBarLink name="Log in" href="/login" hide="mobile"/>
+								<NavBarLink name="Sign up" href="/signup" border hide="mobile"/>
+							</>
 						)}
 					</div>
 				</div>
@@ -133,7 +139,16 @@ export function NavBarContent({
 
 			<div className={`sm:hidden ${mobileMenuOpen ? '' : 'hidden'}`}>
 				<div className="pb-3 pt-2 px-2 space-y-1">
-					{links.map((link) => (
+					{[
+						...links,
+						{
+							name: 'Log in',
+							href: '/login',
+						}, {
+							name: 'Sign up',
+							href: '/signup',
+						},
+					].map((link) => (
 						<NavBarLink key={link.href} {...link}/>
 					))}
 				</div>

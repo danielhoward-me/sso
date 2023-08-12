@@ -4,7 +4,7 @@ import {redirect} from 'next/navigation';
 
 export default class BasePage extends LoginPage {
 	constructor() {
-		super('', '', LoginLocation.Page);
+		super('', 'Your Account', LoginLocation.Page);
 	}
 
 	onSuccessfulLogin() {

@@ -5,6 +5,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@heroicons/react": "^2.0.18",
+		"argon2": "^0.31.0",
 		"autoprefixer": "^10.4.14",
 		"next": "^13.4.13",
 		"pg": "^8.11.2",
@@ -31,6 +32,7 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint"
+		"lint": "eslint",
+		"tool": "bash ./dev/run-tool"
 	}
 }
