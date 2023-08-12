@@ -1,7 +1,6 @@
 import './../styles/tailwind.css';
 
-import {ColourScheme} from './../constants';
-import NavBar, {getColourScheme} from './navBar';
+import NavBar, {shouldBeDark} from './navBar';
 
 import type {Metadata} from 'next';
 
@@ -29,7 +28,7 @@ export default async function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<html lang="en" className={getColourScheme() === ColourScheme.DARK ? 'dark' : ''}>
+		<html lang="en" className={shouldBeDark() ? 'dark' : ''}>
 			<body className="dark:bg-gray-800 dark:text-white bg-white">
 				<NavBar/>
 				<main>

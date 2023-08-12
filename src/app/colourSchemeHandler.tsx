@@ -14,7 +14,7 @@ export function ColourSchemeButton({colourScheme}: {colourScheme: ColourScheme})
 
 	const iconClasses = 'self-center w-5 h-5';
 	const icons = {
-		[ColourScheme.SYSTEM]: <ComputerDesktopIcon className={iconClasses}/>,
+		[ColourScheme.BROWSER]: <ComputerDesktopIcon className={iconClasses}/>,
 		[ColourScheme.LIGHT]: <SunIcon className={iconClasses}/>,
 		[ColourScheme.DARK]: <MoonIcon className={iconClasses}/>,
 	};
@@ -37,11 +37,11 @@ export function ColourSchemeButton({colourScheme}: {colourScheme: ColourScheme})
 
 function handleColourScheme() {
 	// Light and dark colour schemes are handled server-side
-	if (getColourScheme() === ColourScheme.SYSTEM) updateDarkMode();
+	if (getColourScheme() === ColourScheme.BROWSER) updateDarkMode();
 
 	const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 	darkModeMediaQuery.addEventListener('change', () => {
-		if (getColourScheme() !== ColourScheme.SYSTEM) return;
+		if (getColourScheme() !== ColourScheme.BROWSER) return;
 		updateDarkMode();
 	});
 }
@@ -52,18 +52,16 @@ function getColourScheme(): ColourScheme {
 }
 
 function setColourScheme(colourScheme: ColourScheme) {
-	const d = new Date();
-	d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
-	document.cookie = `${CookieName.COLOUR_SCHEME}=${colourScheme}; expires=${d.toUTCString()}; path=/`;
-
+	setCookie(CookieName.COLOUR_SCHEME, colourScheme.toString(), 365);
 	updateDarkMode();
 }
 function updateDarkMode() {
 	const colourScheme = getColourScheme();
-	const darkMode = colourScheme === ColourScheme.SYSTEM ? (
-		window.matchMedia('(prefers-color-scheme: dark)').matches
-	) : colourScheme === ColourScheme.DARK;
+	const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
+	setCookie(CookieName.BROWSER_PREFERED_SCHEME, (darkModeMediaQuery.matches ? ColourScheme.DARK : ColourScheme.LIGHT).toString(), 365);
+
+	const darkMode = colourScheme === ColourScheme.BROWSER ? darkModeMediaQuery.matches : colourScheme === ColourScheme.DARK;
 	document.documentElement.classList.toggle('dark', darkMode);
 }
 
@@ -71,4 +69,9 @@ function getCookie(name: string): string | undefined {
 	const cookies = document.cookie.split(/; */);
 	const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
 	return cookie?.split('=')[1];
+}
+function setCookie(name: string, value: string, days: number) {
+	const d = new Date();
+	d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+	document.cookie = `${name}=${value}; expires=${d.toUTCString()}; path=/`;
 }
