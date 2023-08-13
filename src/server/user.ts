@@ -45,6 +45,6 @@ export default class User {
 
 		const emailHash = createHash('md5').update(this.email).digest('hex');
 
-		return `https://www.gravatar.com/avatar/${emailHash}`;
+		return `https://www.gravatar.com/avatar/${emailHash}?d=wavatar`;
 	}
 }

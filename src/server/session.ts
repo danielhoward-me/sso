@@ -8,7 +8,9 @@ import {v4 as uuid} from 'uuid';
 import type {RawSession, Session} from './types.d';
 
 const sessionCache: {[uuid: string]: Session} = {};
-const defaultSession = processSession();
+const defaultSession: Session = {
+	user: null,
+};
 
 // Called from the session API to load a session into the cache
 export async function loadSessionFromApi(
@@ -21,7 +23,7 @@ export async function loadSessionFromApi(
 		await createSession(ip)
 	);
 
-	const session = processSession(rawSession);
+	const session = await processSession(rawSession);
 	sessionCache[rawSession.id] = session;
 
 	return rawSession;
@@ -66,9 +68,12 @@ async function createSession(ip: string): Promise<RawSession> {
 	};
 }
 
-function processSession(rawSession?: RawSession): Session {
+async function processSession(rawSession?: RawSession): Promise<Session> {
+	const user = rawSession?.user_id ? new User(rawSession.user_id) : null;
+	await user?.waitForLoad();
+
 	return {
-		user: rawSession?.user_id ? new User(rawSession.user_id) : null,
+		user,
 	};
 }
 

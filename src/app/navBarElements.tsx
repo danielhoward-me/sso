@@ -6,11 +6,9 @@ import ArrowTopRightOnSquareIcon from '@heroicons/react/24/outline/ArrowTopRight
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import Image from 'next/image';
-import Link from 'next/link';
 import {useState} from 'react';
 
 import type {ColourScheme} from './../constants';
-import type {Session} from './../server/types.d';
 
 export interface LinkProps {
 	name: string;
@@ -22,7 +20,7 @@ export interface LinkProps {
 
 export function NavBarLink(props: LinkProps) {
 	return (
-		<Link
+		<a
 			href={props.href}
 			target={props.external ? '_blank' : undefined}
 			className={`${props.border ? 'border-2 rounded-md border-current' : ''} ${props.hide === 'mobile' ? 'hidden sm:block' : ''} ${props.hide === 'desktop' ? 'block sm:hidden' : ''}`}
@@ -35,7 +33,7 @@ export function NavBarLink(props: LinkProps) {
 					)}
 				</div>
 			</NavBarElement>
-		</Link>
+		</a>
 	);
 }
 
@@ -70,14 +68,19 @@ interface Link {
 
 interface NavBarProps {
 	colourScheme: ColourScheme;
-	session: Session;
+	loggedIn: boolean;
+	username?: string;
+	profilePicture?: string;
 }
 
 export function NavBarContent({
 	colourScheme,
-	session,
+	loggedIn,
+	username,
+	profilePicture,
 }: NavBarProps) {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
 	const links: Link[] = [
 		{
@@ -122,11 +125,16 @@ export function NavBarContent({
 							</div>
 						</div>
 					</div>
-					<div className="absolute right-0 flex flex-1 items-center space-x-4">
+					<div className="absolute right-0 flex flex-1 items-center space-x-2 sm:space-x-4">
 						<ColourSchemeButton colourScheme={colourScheme}/>
 
-						{session?.user ? (
-							<NavBarLink name="Log out" href="/api/logout"/>
+						{loggedIn ? (
+							<NavBarButton onClick={() => setAccountMenuOpen(!accountMenuOpen)}>
+								<div className="flex space-x-2 items-center">
+									<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePicture || ''}/>
+									<p>{username}</p>
+								</div>
+							</NavBarButton>
 						) : (
 							<>
 								<NavBarLink name="Log in" href="/login" hide="mobile"/>
@@ -137,8 +145,8 @@ export function NavBarContent({
 				</div>
 			</div>
 
-			<div className={`sm:hidden ${mobileMenuOpen ? '' : 'hidden'}`}>
-				<div className="pb-3 pt-2 px-2 space-y-1">
+			<div className={`sm:hidden ${mobileMenuOpen ? 'fixed' : 'hidden '}`}>
+				<div className={`pb-3 pt-2 px-2 space-y-1 ${mobileMenuOpen ? 'shadow-lg dark:bg-gray-800 bg-white w-screen' : ''}`}>
 					{[
 						...links,
 						{

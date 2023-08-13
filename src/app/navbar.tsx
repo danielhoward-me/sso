@@ -5,11 +5,14 @@ import {NavBarContent} from './navBarElements';
 import {cookies as getCookies} from 'next/headers';
 
 export default function NavBar() {
+	const session = getSession();
 	return (
 		<nav className="shadow-lg dark:bg-gray-800 bg-white">
 			<NavBarContent
 				colourScheme={getColourScheme()}
-				session={getSession()}
+				loggedIn={session.user !== null}
+				username={session.user?.username}
+				profilePicture={session.user?.getProfilePictureUrl()}
 			/>
 		</nav>
 	);
