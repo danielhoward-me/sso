@@ -1,22 +1,28 @@
 import {CookieName, SESSION_COOKIE_MAX_AGE} from './../constants';
 
+import {NextResponse} from 'next/server';
+
 import type {SessionApiRequestBody, RawSession} from './types.d';
 import type {NextURL} from 'next/dist/server/web/next-url';
-import type {NextRequest, NextResponse} from 'next/server';
+import type {NextRequest} from 'next/server';
 
 // Called by middleware to make a request to the session API
-export async function loadSession(req: NextRequest, res: NextResponse) {
-	if (req.nextUrl.pathname === '/api/session') return;
+export async function loadSession(req: NextRequest): Promise<NextResponse> {
+	if (req.nextUrl.pathname === '/api/session') return NextResponse.next();
 
 	const ip = req.ip ?? '::1';
 	const sessionId = req.cookies.get(CookieName.SESSION)?.value;
 
 	const finalSessionId = await makeSessionRequest(req.nextUrl, {sessionId, ip});
-	if (finalSessionId === sessionId) return;
+	if (finalSessionId === sessionId) return NextResponse.next();
 
+	// If allowing to page to go through, set the session cookie
+	// won't have updated
+	const res = NextResponse.redirect(req.nextUrl, 302);
 	res.cookies.set(CookieName.SESSION, finalSessionId, {
 		maxAge: SESSION_COOKIE_MAX_AGE,
 	});
+	return res;
 }
 
 async function makeSessionRequest(url: NextURL, body: SessionApiRequestBody): Promise<string> {

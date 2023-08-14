@@ -1,5 +1,7 @@
 'use client';
 
+import {loginPageValidationData} from './../../../inputs';
+import validate from './../../../validate';
 import Button from './../../components/button';
 import {TextInput} from './../../components/input';
 import LoadingSpinner from './../../components/loading-spinner';
@@ -13,39 +15,59 @@ export default function LoginForm() {
 	const router = useRouter();
 
 	const [loggingIn, setLoggingIn] = useState(false);
+	const [emailError, setEmailError] = useState('');
+	const [passwordError, setPasswordError] = useState('');
 	const [errorText, setErrorText] = useState('');
 
-	return (
-		<form className="max-w-lg mx-auto" onSubmitCapture={async (e) => {
-			setLoggingIn(true);
-			setErrorText('');
+	async function onLoginSubmit(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault();
 
-			try {
-				const loggedIn = await handleSubmit(e);
+		setLoggingIn(true);
+		setEmailError('');
+		setPasswordError('');
+		setErrorText('');
 
-				if (loggedIn) {
-					router.push('/api/successful-login');
-					return;
-				} else {
-					setErrorText('The email or password you entered is incorrect.');
-				}
-			} catch (err) {
-				console.error(err);
-				setErrorText('There was an error when attempting you log you in. Please try again later.');
-			}
+		const form = e.target as HTMLFormElement;
+		const formData = new FormData(form);
+		const body = Object.fromEntries(formData) as {[key: string]: string};
 
+		const validationErrors = validate(loginPageValidationData, body);
+		if (Object.keys(validationErrors).length > 0) {
+			setEmailError(validationErrors.email ?? '');
+			setPasswordError(validationErrors.password ?? '');
 			setLoggingIn(false);
-		}}>
+			return;
+		}
+
+		try {
+			const loggedIn = await login(body);
+
+			if (loggedIn) {
+				router.push('/api/successful-login');
+				return;
+			} else {
+				setErrorText('The email or password you entered is incorrect.');
+			}
+		} catch (err) {
+			console.error(err);
+			setErrorText('There was an error when attempting you log you in. Please try again later.');
+		}
+
+		setLoggingIn(false);
+	}
+
+	return (
+		<form className="max-w-lg mx-auto" onSubmit={onLoginSubmit}>
 			<div className="mt-8">
 				<TextInput
 					label="Email"
 					id="email"
 					name="email"
 					placeholder="you@example.com"
-					type="email"
+					type="text"
 					required
-					maxLength={256}
 					tabIndex={1}
+					error={emailError}
 				/>
 			</div>
 			<div className="mt-6">
@@ -58,6 +80,7 @@ export default function LoginForm() {
 					type="password"
 					required
 					tabIndex={2}
+					error={passwordError}
 				/>
 			</div>
 			{errorText && <p className="text-red-500 text-center mt-4">{errorText}</p>}
@@ -69,11 +92,7 @@ export default function LoginForm() {
 	);
 }
 
-async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-	e.preventDefault();
-	const form = e.target as HTMLFormElement;
-	const formData = new FormData(form);
-	const body = Object.fromEntries(formData);
+async function login(body: {[key: string]: string}) {
 	const response = await fetch('/api/login', {
 		method: 'POST',
 		body: JSON.stringify(body),

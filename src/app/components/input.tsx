@@ -2,6 +2,7 @@ import Link from './link';
 
 type TextInputProps = {
 	label: string;
+	error?: string;
 	labelLink?: InputLabelLink;
 } & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 interface InputLabelLink {
@@ -35,9 +36,16 @@ export function TextInput(props: TextInputProps) {
 				)}
 			</div>
 			<input
-				className="appearance-none shadow border rounded w-full py-2 px-3 text-gray-700 ring-0 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
+				className={`appearance-none shadow border-2 rounded w-full py-2 px-3 text-gray-700 ring-0 focus:outline-none focus:ring-2 mt-2 mb-1 ring-opacity-50 ${props.error ? 'ring-red-400 border-red-500' : 'ring-blue-500'}`}
 				{...inputProps}
+				// required should be handled by the validate function
+				required={false}
 			/>
+			{props.error && (
+				<span className="text-red-500">
+					{props.error}
+				</span>
+			)}
 		</div>
 	);
 }
