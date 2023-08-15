@@ -1,17 +1,21 @@
 'use client';
 
-import {loginPageValidationData} from './../../../inputs';
-import validate from './../../../validate';
-import Button from './../../components/button';
-import {TextInput} from './../../components/input';
-import LoadingSpinner from './../../components/loading-spinner';
+import {loginPageValidationData} from './../../inputs';
+import validate from './../../validate';
+import Button from './../components/button';
+import {TextInput} from './../components/input';
+import LoadingSpinner from './../components/loading-spinner';
 
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
 
 import type {FormEvent} from 'react';
 
-export default function LoginForm() {
+interface Props {
+	redirect: string;
+}
+
+export default function LoginForm({redirect}: Props) {
 	const router = useRouter();
 
 	const [loggingIn, setLoggingIn] = useState(false);
@@ -43,7 +47,7 @@ export default function LoginForm() {
 			const loggedIn = await login(body);
 
 			if (loggedIn) {
-				router.push('/api/successful-login');
+				router.push(redirect);
 				return;
 			} else {
 				setErrorText('The email or password you entered is incorrect.');

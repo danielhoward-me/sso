@@ -4,6 +4,7 @@ import {ColourSchemeButton} from './colourSchemeHandler';
 
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/outline/ArrowTopRightOnSquareIcon';
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
+import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import Image from 'next/image';
 import {useState} from 'react';
@@ -16,6 +17,7 @@ export interface LinkProps {
 	border?: boolean;
 	external?: boolean;
 	hide?: 'mobile' | 'desktop';
+	indent?: boolean;
 }
 
 export function NavBarLink(props: LinkProps) {
@@ -25,7 +27,7 @@ export function NavBarLink(props: LinkProps) {
 			target={props.external ? '_blank' : undefined}
 			className={`${props.border ? 'border-2 rounded-md border-current' : ''} ${props.hide === 'mobile' ? 'hidden sm:block' : ''} ${props.hide === 'desktop' ? 'block sm:hidden' : ''}`}
 		>
-			<NavBarElement>
+			<NavBarElement indent={props.indent}>
 				<div className="inline-flex items-baseline">
 					{props.name}
 					{props.external && (
@@ -40,11 +42,12 @@ export function NavBarLink(props: LinkProps) {
 interface ButtonProps {
 	onClick: () => void;
 	children: React.ReactNode;
+	hide?: 'mobile' | 'desktop';
 }
 
 export function NavBarButton(props: ButtonProps) {
 	return (
-		<div tabIndex={0} onClick={props.onClick} className="hover:cursor-pointer">
+		<div tabIndex={0} onClick={props.onClick} className={`hover:cursor-pointer ${props.hide === 'mobile' ? 'hidden sm:block' : ''} ${props.hide === 'desktop' ? 'block sm:hidden' : ''}`}>
 			<NavBarElement>
 				{props.children}
 			</NavBarElement>
@@ -52,9 +55,9 @@ export function NavBarButton(props: ButtonProps) {
 	);
 }
 
-function NavBarElement({children}: {children: React.ReactNode}) {
+function NavBarElement({children, indent}: {children: React.ReactNode, indent?: boolean}) {
 	return (
-		<div className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 select-none">
+		<div className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 select-none ${indent ? 'ml-6' : ''}`}>
 			{children}
 		</div>
 	);
@@ -129,7 +132,7 @@ export function NavBarContent({
 						<ColourSchemeButton colourScheme={colourScheme}/>
 
 						{loggedIn ? (
-							<NavBarButton onClick={() => setAccountMenuOpen(!accountMenuOpen)}>
+							<NavBarButton onClick={() => setAccountMenuOpen(!accountMenuOpen)} hide="mobile">
 								<div className="flex space-x-2 items-center">
 									<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePicture || ''}/>
 									<p>{username}</p>
@@ -145,20 +148,42 @@ export function NavBarContent({
 				</div>
 			</div>
 
-			<div className={`sm:hidden ${mobileMenuOpen ? 'fixed' : 'hidden '}`}>
-				<div className={`pb-3 pt-2 px-2 space-y-1 ${mobileMenuOpen ? 'shadow-lg dark:bg-gray-800 bg-white w-screen' : ''}`}>
-					{[
-						...links,
-						{
-							name: 'Log in',
-							href: '/login',
-						}, {
-							name: 'Sign up',
-							href: '/signup',
-						},
-					].map((link) => (
+			<div className={`sm:hidden ${mobileMenuOpen ? '' : 'hidden '}`}>
+				<div className="pb-3 pt-2 px-2 space-y-1">
+					{links.map((link) => (
 						<NavBarLink key={link.href} {...link}/>
 					))}
+
+					{loggedIn ? (
+						<>
+							<NavBarButton onClick={() => setAccountMenuOpen(!accountMenuOpen)}>
+								<div className="flex space-x-2 items-center">
+									<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePicture || ''}/>
+									<p>{username}</p>
+									<ChevronDownIcon className={`self-center w-5 h-5 ${accountMenuOpen ? 'rotate-180' : ''}`}/>
+								</div>
+							</NavBarButton>
+							{accountMenuOpen && (
+								<>
+									<NavBarLink name="Account" href="/account" indent/>
+									<NavBarLink name="Log out" href="/logout" indent/>
+								</>
+							)}
+						</>
+					) : (
+						[
+							{
+								name: 'Log in',
+								href: '/login',
+							},
+							{
+								name: 'Sign up',
+								href: '/signup',
+							},
+						].map((link) => (
+							<NavBarLink key={link.href} {...link}/>
+						))
+					)}
 				</div>
 			</div>
 		</>

@@ -31,7 +31,7 @@ export default async function RootLayout({
 		<html lang="en" className={shouldBeDark() ? 'dark' : ''}>
 			<body className="dark:bg-gray-800 dark:bg-opacity-95 dark:text-white bg-gray-100">
 				<NavBar/>
-				<main>
+				<main className="translate-y-16">
 					{children}
 				</main>
 			</body>

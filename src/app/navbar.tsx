@@ -7,13 +7,15 @@ import {cookies as getCookies} from 'next/headers';
 export default function NavBar() {
 	const session = getSession();
 	return (
-		<nav className="shadow-lg dark:bg-gray-800 bg-white">
-			<NavBarContent
-				colourScheme={getColourScheme()}
-				loggedIn={session.user !== null}
-				username={session.user?.username}
-				profilePicture={session.user?.getProfilePictureUrl()}
-			/>
+		<nav className="fixed left-0 right-0 top-0 z-50">
+			<div className="shadow-lg dark:bg-gray-800 bg-white">
+				<NavBarContent
+					colourScheme={getColourScheme()}
+					loggedIn={session.user !== null}
+					username={session.user?.username}
+					profilePicture={session.user?.getProfilePictureUrl()}
+				/>
+			</div>
 		</nav>
 	);
 }

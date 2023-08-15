@@ -11,3 +11,5 @@ export enum ColourScheme {
 	DARK,
 }
 export const DEFAULT_COLOUR_SCHEME = ColourScheme.BROWSER;
+
+export const DEFAULT_POST_LOGIN_REDIRECT = '/';
