@@ -77,7 +77,7 @@ async function processSession(rawSession?: RawSession): Promise<Session> {
 	};
 }
 
-export async function saveSession(userId: string): Promise<void> {
+export async function saveSession(userId: string | null): Promise<void> {
 	const sessionId = getSessionId();
 	await db.updateSession(sessionId, userId);
 }

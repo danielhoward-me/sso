@@ -81,7 +81,7 @@ class Database {
 		);
 	}
 
-	public async updateSession(sessionId: string, userId: string) {
+	public async updateSession(sessionId: string, userId: string | null) {
 		await this.query(
 			'UPDATE sessions SET user_id = $1 WHERE id = $2',
 			[userId, sessionId],
