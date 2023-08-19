@@ -1,6 +1,6 @@
-import {DEFAULT_POST_LOGIN_REDIRECT} from './../../constants';
 import {getSession} from './../../server/session';
 import Link from './../components/link';
+import getRedirect from './../utils/getRedirect';
 import LoginForm from './form';
 
 import {redirect} from 'next/navigation';
@@ -9,7 +9,7 @@ import type {Metadata} from 'next';
 
 export const metadata: Metadata = {
 	title: 'Log in to Your Account',
-	description: 'Log in to your account to access your data and settings',
+	description: 'Log in to your account to access and save your data across all of my services',
 };
 
 interface Props {
@@ -21,8 +21,8 @@ interface Props {
 export default function LoginPage({searchParams}: Props) {
 	const session = getSession();
 
-	const redirectParam = typeof searchParams.redirect === 'string' ? searchParams.redirect : DEFAULT_POST_LOGIN_REDIRECT;
-	const redirectPath = /^https?/.test(redirectParam) ? DEFAULT_POST_LOGIN_REDIRECT : redirectParam;
+	const redirectPath = getRedirect(searchParams, '/login');
+
 	if (session.user) {
 		redirect(redirectPath);
 	}

@@ -2,13 +2,11 @@ import db from './database';
 
 import {createHash} from 'crypto';
 
-import type {RawUser} from './types.d';
-
 export default class User {
-	loaded = false;
-	dbPromise: Promise<RawUser> | null = null;
+	private loaded = false;
+	private loadPromise: Promise<void> | null = null;
 
-	readonly id: string;
+	id: string;
 	username: string;
 	email: string;
 	created: Date;
@@ -16,14 +14,13 @@ export default class User {
 
 	constructor(id: string) {
 		this.id = id;
-		this.load();
+		this.loadPromise = this.load();
 	}
 
 	async load() {
 		if (this.loaded) return;
 
-		this.dbPromise = db.getUser(this.id);
-		const rawUser = await this.dbPromise;
+		const rawUser = await db.getUser(this.id);
 		if (!rawUser) throw new Error(`User ${this.id} not found`);
 
 		this.username = rawUser.username;
@@ -35,9 +32,9 @@ export default class User {
 	}
 
 	async waitForLoad() {
-		if (this.loaded || !this.dbPromise) return;
+		if (this.loaded || !this.loadPromise) return;
 
-		await this.dbPromise;
+		await this.loadPromise;
 	}
 
 	getProfilePictureUrl() {

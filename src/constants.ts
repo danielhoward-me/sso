@@ -12,4 +12,5 @@ export enum ColourScheme {
 }
 export const DEFAULT_COLOUR_SCHEME = ColourScheme.BROWSER;
 
+export const REDIRECT_QUERY_PARAMETER_NAME = 'redirect';
 export const DEFAULT_POST_LOGIN_REDIRECT = '/';

@@ -1,5 +1,6 @@
 'use client';
 
+import {REDIRECT_QUERY_PARAMETER_NAME} from './../constants';
 import {ColourSchemeButton} from './colourSchemeHandler';
 
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/outline/ArrowTopRightOnSquareIcon';
@@ -7,6 +8,7 @@ import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import Image from 'next/image';
+import {usePathname, useSearchParams} from 'next/navigation';
 import {useState} from 'react';
 
 import type {ColourScheme} from './../constants';
@@ -85,6 +87,10 @@ export function NavBarContent({
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
+	const searchParams = useSearchParams();
+	const fullPath = `${usePathname()}${Array.from(searchParams.keys()).length === 0 ? '' : '?'}${searchParams.toString()}`;
+	const accountQueryString = `?${REDIRECT_QUERY_PARAMETER_NAME}=${encodeURIComponent(fullPath)}`;
+
 	const links: Link[] = [
 		{
 			name: 'Home',
@@ -149,8 +155,8 @@ export function NavBarContent({
 									</div>
 								) : (
 									<>
-										<NavBarLink name="Log in" href="/login" hide="mobile"/>
-										<NavBarLink name="Sign up" href="/signup" border hide="mobile"/>
+										<NavBarLink name="Log in" href={`/login${accountQueryString}`} hide="mobile"/>
+										<NavBarLink name="Sign up" href={`/signup${accountQueryString}`} border hide="mobile"/>
 									</>
 								)}
 							</div>
