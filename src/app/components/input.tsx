@@ -1,4 +1,5 @@
 import Link from './link';
+import sanitiseProps from './sanitiseProps';
 
 type TextInputProps = {
 	label: string;
@@ -11,15 +12,10 @@ interface InputLabelLink {
 }
 
 export function TextInput(props: TextInputProps) {
-	const nonInputAttributes = [
+	const inputProps = sanitiseProps(props, [
 		'label',
 		'labelLink',
-	];
-	const inputProps = {};
-	Object.keys(props).forEach((attribute) => {
-		if (nonInputAttributes.includes(attribute)) return;
-		inputProps[attribute] = props[attribute];
-	});
+	]);
 
 	return (
 		<div className="text-left">

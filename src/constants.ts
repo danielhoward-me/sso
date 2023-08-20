@@ -14,3 +14,13 @@ export const DEFAULT_COLOUR_SCHEME = ColourScheme.BROWSER;
 
 export const REDIRECT_QUERY_PARAMETER_NAME = 'redirect';
 export const DEFAULT_POST_LOGIN_REDIRECT = '/';
+
+export const SIGNUP_PLACEHOLDER_USERNAMES = [
+	'Rumpelstiltskin',
+	'FashionForward',
+	'NomNomNation',
+	'RecipeRockstar',
+	'TouristyTraveler',
+	'TechyTechie',
+	'FishFanatic',
+];

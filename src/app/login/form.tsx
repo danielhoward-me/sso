@@ -4,7 +4,6 @@ import {loginPageValidationData} from './../../inputs';
 import validate from './../../validate';
 import Button from './../components/button';
 import {TextInput} from './../components/input';
-import LoadingSpinner from './../components/loading-spinner';
 
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
@@ -69,7 +68,6 @@ export default function LoginForm({redirect}: Props) {
 					name="email"
 					placeholder="you@example.com"
 					type="text"
-					required
 					tabIndex={1}
 					error={emailError}
 				/>
@@ -82,14 +80,12 @@ export default function LoginForm({redirect}: Props) {
 					name="password"
 					placeholder="Password"
 					type="password"
-					required
 					tabIndex={2}
 					error={passwordError}
 				/>
 			</div>
 			{errorText && <p className="text-red-500 text-center mt-4">{errorText}</p>}
-			<Button className="flex items-center mx-auto mt-8" type="submit" disabled={loggingIn}>
-				<LoadingSpinner visible={loggingIn}/>
+			<Button className="mx-auto mt-8" type="submit" loading={loggingIn}>
 				Log in
 			</Button>
 		</form>
