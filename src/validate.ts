@@ -4,6 +4,7 @@ export type ValidationData = {
 };
 type SingleValidationData = {
 	required?: boolean;
+	shouldMatch?: string[];
 } & (NumberValidationData | StringValidationData);
 interface NumberValidationData {
 	type: 'number';
@@ -16,7 +17,7 @@ interface StringValidationData {
 	maxLength?: number;
 	patterns?: StringValidationPattern[];
 }
-interface StringValidationPattern {
+export interface StringValidationPattern {
 	pattern: RegExp;
 	message: string;
 }
@@ -24,11 +25,19 @@ interface StringValidationPattern {
 export default function validate(validationData: ValidationData, body: {[key: string]: string | number | undefined}): {[key: string]: string} {
 	const errorMessages: {[key: string]: string} = {};
 
-	Object.keys(body).forEach((inputName) => {
+	Object.keys(validationData.inputs).forEach((inputName) => {
 		const inputValidationData = validationData.inputs[inputName];
 		const inputValue = body[inputName];
 
-		const inputDisplayName = validationData.capitalise ? inputName[0].toUpperCase() + inputName.slice(1) : inputName;
+		const inputDisplayName = validationData.capitalise ? capitalise(inputName) : inputName;
+
+		if (inputValidationData.shouldMatch !== undefined) {
+			inputValidationData.shouldMatch.forEach((otherInputName) => {
+				if (inputValue !== body[otherInputName]) {
+					errorMessages[inputName] = `${inputDisplayName} must match ${capitalise(otherInputName)}`;
+				}
+			});
+		}
 
 		if (inputValidationData.type === 'number') {
 			if (inputValidationData.required && inputValue === undefined) {
@@ -65,4 +74,10 @@ export default function validate(validationData: ValidationData, body: {[key: st
 	});
 
 	return errorMessages;
+}
+
+function capitalise(string: string): string {
+	return string.split(/(?=[A-Z])/).map((word) => (
+		word[0].toUpperCase() + word.slice(1)
+	)).join(' ');
 }

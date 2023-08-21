@@ -58,6 +58,15 @@ class Database {
 		await this.client.end();
 	}
 
+	public async fieldExists(table: string, field: string, value: string): Promise<boolean> {
+		const {rows} = await this.query<{exists: boolean}>(
+			`SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${field} = $1) AS exists`,
+			[value],
+		);
+
+		return rows[0].exists;
+	}
+
 	public async getSession(sessionId: string): Promise<RawSession | undefined> {
 		const {rows} = await this.query<RawSession>(
 			'SELECT * FROM sessions WHERE id = $1',
@@ -104,6 +113,13 @@ class Database {
 		);
 
 		return rows[0];
+	}
+
+	public async createUser(userId: string, username: string, email: string, password: string) {
+		await this.query(
+			'INSERT INTO users (id, username, email, password) VALUES ($1, $2, $3, $4)',
+			[userId, username, email, password],
+		);
 	}
 }
 

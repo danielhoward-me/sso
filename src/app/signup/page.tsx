@@ -25,7 +25,7 @@ export default function SignupPage({searchParams}: SearchParamsProps) {
 	return (
 		<MiddleIsland>
 			<h1 className="text-6xl font-bold pb-2">Sign up for Your Account</h1>
-			<UserDetails user={null}/>
+			<UserDetails user={null} redirect={redirectPath}/>
 		</MiddleIsland>
 	);
 }

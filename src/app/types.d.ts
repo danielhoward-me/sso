@@ -3,3 +3,11 @@ export interface SearchParamsProps {
 		[key: string]: string | string[] | undefined,
 	};
 }
+
+export type SignupApiResponse = {
+	accountCreated: true;
+} | {
+	accountCreated: false;
+	usernameExists?: boolean;
+	emailExists?: boolean;
+};

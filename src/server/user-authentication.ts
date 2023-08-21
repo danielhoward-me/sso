@@ -12,3 +12,9 @@ export async function loginUser(email: string, password: string): Promise<boolea
 	if (isPasswordCorrect) saveSession(userData.id);
 	return isPasswordCorrect;
 }
+
+export async function createUser(id: string, username: string, email: string, password: string) {
+	const hashedPassword = await argon2.hash(password);
+	await db.createUser(id, username, email, hashedPassword);
+	saveSession(id);
+}

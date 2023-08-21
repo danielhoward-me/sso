@@ -5,7 +5,6 @@ import validate from './../../validate';
 import Button from './../components/button';
 import {TextInput} from './../components/input';
 
-import {useRouter} from 'next/navigation';
 import {useState} from 'react';
 
 import type {FormEvent} from 'react';
@@ -15,8 +14,6 @@ interface Props {
 }
 
 export default function LoginForm({redirect}: Props) {
-	const router = useRouter();
-
 	const [loggingIn, setLoggingIn] = useState(false);
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');
@@ -46,7 +43,7 @@ export default function LoginForm({redirect}: Props) {
 			const loggedIn = await login(body);
 
 			if (loggedIn) {
-				router.push(redirect);
+				window.location.href = redirect;
 				return;
 			} else {
 				setErrorText('The email or password you entered is incorrect.');
@@ -102,7 +99,7 @@ async function login(body: {[key: string]: string}) {
 	});
 
 	if (!response.ok) {
-		throw new Error();
+		throw new Error('Failed to make request to api login route');
 	}
 
 	const {successful} = await response.json();

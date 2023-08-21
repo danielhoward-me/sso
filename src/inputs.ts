@@ -1,4 +1,9 @@
-import type {ValidationData} from './validate';
+import type {ValidationData, StringValidationPattern} from './validate';
+
+const emailValidationPattern: StringValidationPattern = {
+	pattern: /^[^@]+@[^@]+\.[^@]+$/,
+	message: 'must be a valid email address',
+};
 
 export const sessionApiValidationData: ValidationData = {
 	inputs: {
@@ -19,16 +24,55 @@ export const loginPageValidationData: ValidationData = {
 			type: 'string',
 			required: true,
 			maxLength: 256,
-			patterns: [
-				{
-					pattern: /^[^@]+@[^@]+\.[^@]+$/,
-					message: 'must be a valid email address',
-				},
-			],
+			patterns: [emailValidationPattern],
 		},
 		password: {
 			type: 'string',
 			required: true,
+		},
+	},
+	capitalise: true,
+};
+
+export const signupPageValidationData: ValidationData = {
+	inputs: {
+		username: {
+			type: 'string',
+			required: true,
+		},
+		email: {
+			type: 'string',
+			required: true,
+			maxLength: 256,
+			patterns: [emailValidationPattern],
+		},
+		password: {
+			type: 'string',
+			required: true,
+			minLength: 8,
+			patterns: [
+				{
+					pattern: /[a-z]/,
+					message: 'must contain at least one lowercase letter',
+				},
+				{
+					pattern: /[A-Z]/,
+					message: 'must contain at least one uppercase letter',
+				},
+				{
+					pattern: /[0-9]/,
+					message: 'must contain at least one number',
+				},
+				{
+					pattern: /[^a-zA-Z0-9]/,
+					message: 'must contain something other than a letter or number',
+				},
+			],
+		},
+		confirmPassword: {
+			type: 'string',
+			required: true,
+			shouldMatch: ['password'],
 		},
 	},
 	capitalise: true,

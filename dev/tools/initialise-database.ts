@@ -13,7 +13,7 @@ async function main() {
 	const databaseName = process.env.PGDATABASE;
 	const databaseUser = process.env.PGUSER;
 	console.log(`Reseting database ${databaseName}`);
-	await db.query(`drop owned by ${databaseUser};`);
+	await db.query(`DROP OWNED BY ${databaseUser};`);
 
 	for (const file of files) {
 		const filename = `${file}.sql`;

@@ -142,7 +142,7 @@ export function NavBarContent({
 											<div className="flex space-x-2 items-center">
 												<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePicture || ''}/>
 												<p>{username}</p>
-												<ChevronDownIcon className={`self-center w-5 h-5 ${accountMenuOpen ? 'rotate-180' : ''}`}/>
+												<ChevronDownIcon className={`self-center w-5 h-5 transition-transform ${accountMenuOpen ? 'rotate-180' : ''}`}/>
 											</div>
 										</NavBarButton>
 										<div className={`hidden absolute right-0 mt-4 w-48 rounded-md shadow-lg p-2 bg-white dark:bg-gray-800 ${accountMenuOpen ? 'sm:block' : ''}`}>
@@ -172,7 +172,7 @@ export function NavBarContent({
 										<div className="flex space-x-2 items-center">
 											<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePicture || ''}/>
 											<p>{username}</p>
-											<ChevronDownIcon className={`self-center w-5 h-5 ${accountMenuOpen ? 'rotate-180' : ''}`}/>
+											<ChevronDownIcon className={`self-center w-5 h-5 transition-transform ${accountMenuOpen ? 'rotate-180' : ''}`}/>
 										</div>
 									</NavBarButton>
 									{accountMenuOpen && (
@@ -186,11 +186,11 @@ export function NavBarContent({
 								[
 									{
 										name: 'Log in',
-										href: '/login',
+										href: `/login${accountQueryString}`,
 									},
 									{
 										name: 'Sign up',
-										href: '/signup',
+										href: `/signup${accountQueryString}`,
 									},
 								].map((link) => (
 									<NavBarLink key={link.href} {...link}/>

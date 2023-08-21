@@ -2,6 +2,7 @@ import {getSession} from './../../server/session';
 import MiddleIsland from './../components/middleIsland';
 import UserDetails from './../components/userDetails';
 import {getRedirectQueryForPage} from './../utils/getRedirect';
+import getUserDetailsValues from './../utils/getUserDetailsValues';
 
 import {redirect} from 'next/navigation';
 
@@ -22,7 +23,7 @@ export default function AccountPage() {
 	return (
 		<MiddleIsland>
 			<h1 className="text-6xl font-bold pb-2">View Your Account</h1>
-			<UserDetails user={session.user}/>
+			<UserDetails user={getUserDetailsValues(session.user)}/>
 		</MiddleIsland>
 	);
 }
