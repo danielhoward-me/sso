@@ -4,9 +4,11 @@ import {loginPageValidationData} from './../../inputs';
 import validate from './../../validate';
 import Button from './../components/button';
 import {TextInput} from './../components/input';
+import makeApiRequest from './../utils/makeApiRequest';
 
 import {useState} from 'react';
 
+import type {LoginApiResponse} from './../types.d';
 import type {FormEvent} from 'react';
 
 interface Props {
@@ -40,9 +42,9 @@ export default function LoginForm({redirect}: Props) {
 		}
 
 		try {
-			const loggedIn = await login(body);
+			const {successful} = await makeApiRequest<LoginApiResponse>('login', body);
 
-			if (loggedIn) {
+			if (successful) {
 				window.location.href = redirect;
 				return;
 			} else {
@@ -87,21 +89,4 @@ export default function LoginForm({redirect}: Props) {
 			</Button>
 		</form>
 	);
-}
-
-async function login(body: {[key: string]: string}) {
-	const response = await fetch('/api/login', {
-		method: 'POST',
-		body: JSON.stringify(body),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-
-	if (!response.ok) {
-		throw new Error('Failed to make request to api login route');
-	}
-
-	const {successful} = await response.json();
-	return successful;
 }

@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 		};
 	}
 
-	if (!response.accountCreated) return NextResponse.json(response);
+	if (!response.accountCreated) return NextResponse.json<SignupApiResponse>(response);
 
 	let id = '';
 	while (id === '' || await db.fieldExists('users', 'id', id)) {
@@ -49,5 +49,5 @@ export async function POST(req: NextRequest) {
 
 	await createUser(id, data.username, data.email, data.password);
 
-	return NextResponse.json({accountCreated: true});
+	return NextResponse.json<SignupApiResponse>({accountCreated: true});
 }

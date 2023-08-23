@@ -1,4 +1,4 @@
-import type {ValidationData, StringValidationPattern} from './validate';
+import type {ValidationData, ValidationDataInputs, StringValidationPattern} from './validate';
 
 const emailValidationPattern: StringValidationPattern = {
 	pattern: /^[^@]+@[^@]+\.[^@]+$/,
@@ -34,45 +34,71 @@ export const loginPageValidationData: ValidationData = {
 	capitalise: true,
 };
 
+const userDetailsValidationInputs: ValidationDataInputs = {
+	username: {
+		type: 'string',
+		required: true,
+		patterns: [
+			{
+				pattern: /\S/,
+				message: 'must not contain any spaces',
+			},
+		],
+	},
+	email: {
+		type: 'string',
+		required: true,
+		maxLength: 256,
+		patterns: [emailValidationPattern],
+	},
+};
+const passwordValidationInputs: ValidationDataInputs = {
+	password: {
+		type: 'string',
+		required: true,
+		minLength: 8,
+		patterns: [
+			{
+				pattern: /[a-z]/,
+				message: 'must contain at least one lowercase letter',
+			},
+			{
+				pattern: /[A-Z]/,
+				message: 'must contain at least one uppercase letter',
+			},
+			{
+				pattern: /[0-9]/,
+				message: 'must contain at least one number',
+			},
+			{
+				pattern: /[^a-zA-Z0-9]/,
+				message: 'must contain something other than a letter or number',
+			},
+		],
+	},
+	confirmPassword: {
+		type: 'string',
+		required: true,
+		shouldMatch: ['password'],
+	},
+};
 export const signupPageValidationData: ValidationData = {
 	inputs: {
-		username: {
+		...userDetailsValidationInputs,
+		...passwordValidationInputs,
+	},
+	capitalise: true,
+};
+export const userDetailsValidationData: ValidationData = {
+	inputs: userDetailsValidationInputs,
+	capitalise: true,
+};
+export const userPasswordValidationData: ValidationData = {
+	inputs: {
+		...passwordValidationInputs,
+		currentPassword: {
 			type: 'string',
 			required: true,
-		},
-		email: {
-			type: 'string',
-			required: true,
-			maxLength: 256,
-			patterns: [emailValidationPattern],
-		},
-		password: {
-			type: 'string',
-			required: true,
-			minLength: 8,
-			patterns: [
-				{
-					pattern: /[a-z]/,
-					message: 'must contain at least one lowercase letter',
-				},
-				{
-					pattern: /[A-Z]/,
-					message: 'must contain at least one uppercase letter',
-				},
-				{
-					pattern: /[0-9]/,
-					message: 'must contain at least one number',
-				},
-				{
-					pattern: /[^a-zA-Z0-9]/,
-					message: 'must contain something other than a letter or number',
-				},
-			],
-		},
-		confirmPassword: {
-			type: 'string',
-			required: true,
-			shouldMatch: ['password'],
 		},
 	},
 	capitalise: true,

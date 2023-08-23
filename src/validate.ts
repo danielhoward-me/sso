@@ -1,7 +1,8 @@
 export type ValidationData = {
-	inputs: {[key: string]: SingleValidationData};
+	inputs: ValidationDataInputs;
 	capitalise?: boolean;
 };
+export type ValidationDataInputs = {[key: string]: SingleValidationData};
 type SingleValidationData = {
 	required?: boolean;
 	shouldMatch?: string[];

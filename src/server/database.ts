@@ -58,10 +58,21 @@ class Database {
 		await this.client.end();
 	}
 
-	public async fieldExists(table: string, field: string, value: string): Promise<boolean> {
+	public async fieldExists(table: string, field: string, value: string, extraQueries?: {
+		name: string,
+		value: string,
+		negate: boolean,
+	}[]): Promise<boolean> {
+		let parameterIndex = 2;
+		const parameters = [value];
+		const extraQuerySql = extraQueries?.map((query) => {
+			parameters.push(query.value);
+			return `AND ${query.name} ${query.negate ? '!' : ''}= $${parameterIndex++}`;
+		}).join('');
+
 		const {rows} = await this.query<{exists: boolean}>(
-			`SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${field} = $1) AS exists`,
-			[value],
+			`SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${field} = $1 ${extraQuerySql}) AS exists`,
+			parameters,
 		);
 
 		return rows[0].exists;
@@ -119,6 +130,13 @@ class Database {
 		await this.query(
 			'INSERT INTO users (id, username, email, password) VALUES ($1, $2, $3, $4)',
 			[userId, username, email, password],
+		);
+	}
+
+	public async editUserDetails(userId: string, username: string, email: string) {
+		await this.query(
+			'UPDATE users SET username = $1, email = $2 WHERE id = $3',
+			[username, email, userId],
 		);
 	}
 }

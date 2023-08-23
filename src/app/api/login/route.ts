@@ -4,6 +4,7 @@ import validate from './../../../validate';
 
 import {NextResponse} from 'next/server';
 
+import type {LoginApiResponse} from './../../types.d';
 import type {NextRequest} from 'next/server';
 
 interface RequestBody {
@@ -19,5 +20,5 @@ export async function POST(req: NextRequest) {
 	const data = body as RequestBody;
 	const isCorrect = await loginUser(data.email, data.password);
 
-	return NextResponse.json({successful: isCorrect});
+	return NextResponse.json<LoginApiResponse>({successful: isCorrect});
 }

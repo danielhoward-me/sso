@@ -21,7 +21,7 @@ export default function AccountPage() {
 	}
 
 	return (
-		<MiddleIsland>
+		<MiddleIsland fullWidth>
 			<h1 className="text-6xl font-bold pb-2">View Your Account</h1>
 			<UserDetails user={getUserDetailsValues(session.user)}/>
 		</MiddleIsland>

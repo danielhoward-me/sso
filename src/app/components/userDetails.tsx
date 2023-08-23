@@ -1,15 +1,16 @@
 'use client';
 
 import {SIGNUP_PLACEHOLDER_USERNAMES} from './../../constants';
-import {signupPageValidationData} from './../../inputs';
+import {signupPageValidationData, userDetailsValidationData, userPasswordValidationData} from './../../inputs';
 import validate from './../../validate';
+import makeApiRequest from './../utils/makeApiRequest';
 import Button from './button';
 import {TextInput} from './input';
 
 import {useRef, useState} from 'react';
 
 import type {ValidationData} from './../../validate';
-import type {SignupApiResponse} from './../types.d';
+import type {SignupApiResponse, EditUserDetailsApiResponse} from './../types.d';
 import type {UserDetailsValues} from './../utils/getUserDetailsValues';
 import type {FormEvent} from 'react';
 
@@ -74,6 +75,31 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 
 		resetErrors();
 		setUserDetailsButtonLoading(true);
+
+		const validData = runValidation(userDetailsValidationData, userDetailsFormRef.current);
+		if (Object.keys(validData).length === 0) {
+			setUserDetailsButtonLoading(false);
+			return;
+		}
+
+		try {
+			const editUserDetailsOutcome = await makeApiRequest<EditUserDetailsApiResponse>('edituserdetails', validData);
+			if (editUserDetailsOutcome.detailsChanged) {
+				window.location.reload();
+			} else {
+				if (editUserDetailsOutcome.usernameExists) {
+					setUsernameError('This username is already in use. Please choose a different one.');
+				}
+				if (editUserDetailsOutcome.emailExists) {
+					setEmailError('This email is already in use. Please choose a different one.');
+				}
+			}
+		} catch (err) {
+			console.error(err);
+			setUserDetailsErrorText('There was an error when attempting to edit your details. Please try again later.');
+		}
+
+		setUserDetailsButtonLoading(false);
 	}
 
 	async function onUserPasswordSubmit(e: FormEvent<HTMLFormElement>) {
@@ -81,6 +107,12 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 
 		resetErrors();
 		setUserPasswordButtonLoading(true);
+
+		const validData = runValidation(userPasswordValidationData, userDetailsFormRef.current);
+		if (Object.keys(validData).length === 0) {
+			setUserPasswordButtonLoading(false);
+			return;
+		}
 	}
 
 	async function onUserCreateSubmit(e: FormEvent<HTMLFormElement>) {
@@ -96,7 +128,7 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 		}
 
 		try {
-			const createUserOutcome = await createUser(validData);
+			const createUserOutcome = await makeApiRequest<SignupApiResponse>('signup', validData);
 			if (createUserOutcome.accountCreated) {
 				window.location.href = redirect || '/';
 				return;
@@ -123,7 +155,7 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 			<div className="space-y-3">
 				{user ? (
 					<>
-						<form className="max-w-lg mx-auto space-y-2" onSubmit={onUserDetailsSubmit} ref={userDetailsFormRef}>
+						<form className="max-w-4xl mx-auto space-y-2" onSubmit={onUserDetailsSubmit} ref={userDetailsFormRef}>
 							<h1 className="text-3xl font-bold">Account Details</h1>
 							<UserDetailsInputs username={user.username} email={user.email} usernameError={usernameError} emailError={emailError}/>
 
@@ -133,7 +165,7 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 								Save Details
 							</Button>
 						</form>
-						<form className="max-w-lg mx-auto space-y-2" onSubmit={onUserPasswordSubmit} ref={userPasswordFormRef}>
+						<form className="max-w-4xl mx-auto space-y-2" onSubmit={onUserPasswordSubmit} ref={userPasswordFormRef}>
 							<h1 className="text-3xl font-bold">Password</h1>
 							<TextInput
 								label="Current Password"
@@ -234,20 +266,4 @@ function PasswordInputs({passwordLabel, passwordError, confirmPasswordError}: Pa
 			/>
 		</>
 	);
-}
-
-async function createUser(body: {[key: string]: string}): Promise<SignupApiResponse> {
-	const response = await fetch('/api/signup', {
-		method: 'POST',
-		body: JSON.stringify(body),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-
-	if (!response.ok) {
-		throw new Error('Failed to make request to api signup route');
-	}
-
-	return await response.json();
 }
