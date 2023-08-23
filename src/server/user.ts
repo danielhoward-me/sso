@@ -2,6 +2,8 @@ import db from './database';
 
 import {createHash} from 'crypto';
 
+import type {ProfilePictureType} from './types.d';
+
 export default class User {
 	private loaded = false;
 	private loadPromise: Promise<void> | null = null;
@@ -9,8 +11,10 @@ export default class User {
 	id: string;
 	username: string;
 	email: string;
+	profilePicture: ProfilePictureType;
 	created: Date;
-	updated: Date;
+	last_updated: Date;
+	emailHash: string;
 
 	constructor(id: string) {
 		this.id = id;
@@ -25,8 +29,11 @@ export default class User {
 
 		this.username = rawUser.username;
 		this.email = rawUser.email;
+		this.profilePicture = rawUser.profile_picture;
 		this.created = new Date(rawUser.created);
-		this.updated = new Date(rawUser.updated);
+		this.last_updated = new Date(rawUser.last_updated);
+
+		this.emailHash = createHash('md5').update(this.email).digest('hex');
 
 		this.loaded = true;
 	}
@@ -40,8 +47,7 @@ export default class User {
 	getProfilePictureUrl() {
 		if (!this.loaded) throw new Error('User not loaded');
 
-		const emailHash = createHash('md5').update(this.email).digest('hex');
-
-		return `https://www.gravatar.com/avatar/${emailHash}?d=wavatar`;
+		const queryString = `?d=${this.profilePicture === 'custom' ? 'mp' : `${this.profilePicture}&f=y`}`;
+		return `https://www.gravatar.com/avatar/${this.emailHash}${queryString}`;
 	}
 }

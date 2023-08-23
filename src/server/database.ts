@@ -99,7 +99,7 @@ class Database {
 
 	public async getUser(userId: string): Promise<RawUser> {
 		const {rows} = await this.query<RawUser>(
-			'SELECT id, username, email, created, updated FROM users WHERE id = $1',
+			'SELECT id, username, email, profile_picture, created, last_updated FROM users WHERE id = $1',
 			[userId],
 		);
 

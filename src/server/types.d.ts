@@ -10,12 +10,15 @@ export interface Session {
 	user: User | null;
 }
 
+// Should match schema.sql profile_picture
+export type ProfilePictureType = 'custom' | 'identicon' | 'monsterid' | 'wavatar' | 'retro' | 'robohash';
 export interface RawUser {
 	id: string;
 	username: string;
 	email: string;
+	profile_picture: ProfilePictureType;
 	created: string;
-	updated: string;
+	last_updated: string;
 }
 
 export interface UserLoginData {
