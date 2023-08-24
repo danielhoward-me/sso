@@ -9,6 +9,7 @@ import Button from './button';
 import Fieldset from './fieldset';
 import {TextInput} from './input';
 
+import Image from 'next/image';
 import {useRef, useState} from 'react';
 
 import type {ValidationData} from './../../validate';
@@ -183,19 +184,34 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 		<div className="space-y-4 mt-6">
 			<div className="space-y-3">
 				{user ? (
-					<>
-						<form className="max-w-4xl mx-auto" onSubmit={onUserDetailsSubmit} ref={userDetailsFormRef}>
-							<Fieldset title="Account Details">
-								<UserDetailsInputs username={user.username} email={user.email} usernameError={usernameError} emailError={emailError}/>
+					<div className="space-y-1">
+						<div className="max-w-4xl mx-auto">
+							<div className="grid grid-cols-1 lg:grid-cols-[auto_301px] space-y-1 lg:space-x-4 lg:space-y-0">
+								<Fieldset title="Account Details">
+									<form onSubmit={onUserDetailsSubmit} ref={userDetailsFormRef}>
+										<UserDetailsInputs username={user.username} email={user.email} usernameError={usernameError} emailError={emailError}/>
 
-								{userDetailsErrorText && <p className="text-red-500 text-center mt-4">{userDetailsErrorText}</p>}
-								{userDetailsSuccessText && <p className="text-green-600 text-center mt-4">{userDetailsSuccessText}</p>}
+										{userDetailsErrorText && <p className="text-red-500 text-center mt-4">{userDetailsErrorText}</p>}
+										{userDetailsSuccessText && <p className="text-green-600 text-center mt-4">{userDetailsSuccessText}</p>}
 
-								<Button className="mx-auto !mt-4" type="submit" loading={userDetailsButtonLoading}>
-									Save Details
-								</Button>
-							</Fieldset>
-						</form>
+										<Button className="mx-auto !mt-4" type="submit" loading={userDetailsButtonLoading}>
+											Save Details
+										</Button>
+									</form>
+								</Fieldset>
+								<Fieldset title="Profile Picture">
+									<div className="flex justify-center items-center p-5">
+										<Image
+											src={`${user.profilePicture}&s=200`}
+											alt="Account Profile Picture"
+											width={200}
+											height={200}
+											className="rounded-full"
+										/>
+									</div>
+								</Fieldset>
+							</div>
+						</div>
 						<form className="max-w-4xl mx-auto space-y-2" onSubmit={onChangePasswordSubmit} ref={changePasswordFormRef}>
 							<Fieldset title="Password">
 								<TextInput
@@ -216,7 +232,7 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 								</Button>
 							</Fieldset>
 						</form>
-					</>
+					</div>
 				) : (
 					<form className="max-w-lg mx-auto space-y-2" onSubmit={onUserCreateSubmit} ref={userCreateFormRef}>
 						<Fieldset title="Account Details">
