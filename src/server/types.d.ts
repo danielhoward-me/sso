@@ -6,8 +6,8 @@ export interface RawSession {
 	expires: string;
 	user_id: string | null;
 }
-export interface Session {
-	user: User | null;
+export interface Session<T = null> {
+	user: User | T;
 }
 
 // Should match schema.sql profile_picture
@@ -19,11 +19,6 @@ export interface RawUser {
 	profile_picture: ProfilePictureType;
 	created: string;
 	last_updated: string;
-}
-
-export interface UserLoginData {
-	id: string;
-	password: string;
 }
 
 export interface SessionApiRequestBody {

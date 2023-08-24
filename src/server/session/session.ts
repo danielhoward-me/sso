@@ -1,16 +1,11 @@
-import {CookieName, SESSION_COOKIE_MAX_AGE} from './../constants';
-import db from './database';
-import User from './user';
+import {setSession, getSessionId} from './';
+import {SESSION_COOKIE_MAX_AGE} from './../../constants';
+import db from './../database';
+import User from './../user';
 
-import {cookies as getCookies} from 'next/headers';
 import {v4 as uuid} from 'uuid';
 
-import type {RawSession, Session} from './types.d';
-
-const sessionCache: {[uuid: string]: Session} = {};
-const defaultSession: Session = {
-	user: null,
-};
+import type {RawSession, Session} from './../types.d';
 
 // Called from the session API to load a session into the cache
 export async function loadSessionFromApi(
@@ -24,7 +19,7 @@ export async function loadSessionFromApi(
 	);
 
 	const session = await processSession(rawSession);
-	sessionCache[rawSession.id] = session;
+	setSession(rawSession.id, session);
 
 	return rawSession;
 }
@@ -80,16 +75,4 @@ async function processSession(rawSession?: RawSession): Promise<Session> {
 export async function saveSession(userId: string | null): Promise<void> {
 	const sessionId = getSessionId();
 	await db.updateSession(sessionId, userId);
-}
-
-export function getSession(): Session {
-	const cookies = getCookies();
-	const sessionId = cookies.get(CookieName.SESSION)?.value;
-	if (!sessionId) return defaultSession;
-
-	return sessionCache[sessionId] ?? defaultSession;
-}
-export function getSessionId(): string {
-	const cookies = getCookies();
-	return cookies.get(CookieName.SESSION)?.value ?? '';
 }

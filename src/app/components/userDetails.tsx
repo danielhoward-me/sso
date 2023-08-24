@@ -1,18 +1,21 @@
 'use client';
 
 import {SIGNUP_PLACEHOLDER_USERNAMES} from './../../constants';
-import {signupPageValidationData, userDetailsValidationData, userPasswordValidationData} from './../../inputs';
+import {signupPageValidationData, userDetailsValidationData, changePasswordValidationData} from './../../inputs';
 import validate from './../../validate';
+import {changeUsername} from './../navBarElements';
 import makeApiRequest from './../utils/makeApiRequest';
 import Button from './button';
+import Fieldset from './fieldset';
 import {TextInput} from './input';
 
 import {useRef, useState} from 'react';
 
 import type {ValidationData} from './../../validate';
-import type {SignupApiResponse, EditUserDetailsApiResponse} from './../types.d';
+import type {AccountDetailsApiResponse, BasicApiResponse} from './../types.d';
 import type {UserDetailsValues} from './../utils/getUserDetailsValues';
 import type {FormEvent} from 'react';
+
 
 interface UserDetailsProps {
 	user: UserDetailsValues | null;
@@ -28,15 +31,18 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 	const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
 	const [userDetailsButtonLoading, setUserDetailsButtonLoading] = useState(false);
-	const [userPasswordButtonLoading, setUserPasswordButtonLoading] = useState(false);
+	const [changePasswordButtonLoading, setChangePasswordButtonLoading] = useState(false);
 	const [userCreateButtonLoading, setUserCreateButtonLoading] = useState(false);
 
 	const [userDetailsErrorText, setUserDetailsErrorText] = useState('');
-	const [userPasswordErrorText, setUserPasswordErrorText] = useState('');
+	const [changePasswordErrorText, setChangePasswordErrorText] = useState('');
 	const [userCreateErrorText, setUserCreateErrorText] = useState('');
 
+	const [userDetailsSuccessText, setUserDetailsSuccessText] = useState('');
+	const [changePasswordSuccessText, setChangePasswordSuccessText] = useState('');
+
 	const userDetailsFormRef = useRef<HTMLFormElement>(null);
-	const userPasswordFormRef = useRef<HTMLFormElement>(null);
+	const changePasswordFormRef = useRef<HTMLFormElement>(null);
 	const userCreateFormRef = useRef<HTMLFormElement>(null);
 
 	function resetErrors() {
@@ -47,8 +53,11 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 		setConfirmPasswordError('');
 
 		setUserDetailsErrorText('');
-		setUserPasswordErrorText('');
+		setChangePasswordErrorText('');
 		setUserCreateErrorText('');
+
+		setUserDetailsSuccessText('');
+		setChangePasswordSuccessText('');
 	}
 
 	function runValidation(validationData: ValidationData, form: HTMLFormElement | null): {[key: string]: string} {
@@ -83,9 +92,10 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 		}
 
 		try {
-			const editUserDetailsOutcome = await makeApiRequest<EditUserDetailsApiResponse>('edituserdetails', validData);
-			if (editUserDetailsOutcome.detailsChanged) {
-				window.location.reload();
+			const editUserDetailsOutcome = await makeApiRequest<AccountDetailsApiResponse>('edituserdetails', validData);
+			if (editUserDetailsOutcome.successful) {
+				changeUsername(validData.username);
+				setUserDetailsSuccessText('Successfully updated your account details');
 			} else {
 				if (editUserDetailsOutcome.usernameExists) {
 					setUsernameError('This username is already in use. Please choose a different one.');
@@ -102,17 +112,36 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 		setUserDetailsButtonLoading(false);
 	}
 
-	async function onUserPasswordSubmit(e: FormEvent<HTMLFormElement>) {
+	async function onChangePasswordSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
 		resetErrors();
-		setUserPasswordButtonLoading(true);
+		setChangePasswordButtonLoading(true);
 
-		const validData = runValidation(userPasswordValidationData, userDetailsFormRef.current);
+		const validData = runValidation(changePasswordValidationData, changePasswordFormRef.current);
 		if (Object.keys(validData).length === 0) {
-			setUserPasswordButtonLoading(false);
+			setChangePasswordButtonLoading(false);
 			return;
 		}
+
+		try {
+			const {successful} = await makeApiRequest<BasicApiResponse>('changepassword', validData);
+			if (successful) {
+				setChangePasswordSuccessText('Successfully updated your password');
+
+				// Clear the password inputs
+				changePasswordFormRef.current?.querySelectorAll('input').forEach((input) => {
+					input.value = '';
+				});
+			} else {
+				setCurrentPasswordError('This password does not match your current password');
+			}
+		} catch (err) {
+			console.error(err);
+			setChangePasswordErrorText('There was an error when attempting to change your account. Please try again later.');
+		}
+
+		setChangePasswordButtonLoading(false);
 	}
 
 	async function onUserCreateSubmit(e: FormEvent<HTMLFormElement>) {
@@ -128,8 +157,8 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 		}
 
 		try {
-			const createUserOutcome = await makeApiRequest<SignupApiResponse>('signup', validData);
-			if (createUserOutcome.accountCreated) {
+			const createUserOutcome = await makeApiRequest<AccountDetailsApiResponse>('signup', validData);
+			if (createUserOutcome.successful) {
 				window.location.href = redirect || '/';
 				return;
 			} else {
@@ -155,42 +184,50 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 			<div className="space-y-3">
 				{user ? (
 					<>
-						<form className="max-w-4xl mx-auto space-y-2" onSubmit={onUserDetailsSubmit} ref={userDetailsFormRef}>
-							<h1 className="text-3xl font-bold">Account Details</h1>
-							<UserDetailsInputs username={user.username} email={user.email} usernameError={usernameError} emailError={emailError}/>
+						<form className="max-w-4xl mx-auto" onSubmit={onUserDetailsSubmit} ref={userDetailsFormRef}>
+							<Fieldset title="Account Details">
+								<UserDetailsInputs username={user.username} email={user.email} usernameError={usernameError} emailError={emailError}/>
 
-							{userDetailsErrorText && <p className="text-red-500 text-center mt-4">{userDetailsErrorText}</p>}
+								{userDetailsErrorText && <p className="text-red-500 text-center mt-4">{userDetailsErrorText}</p>}
+								{userDetailsSuccessText && <p className="text-green-600 text-center mt-4">{userDetailsSuccessText}</p>}
 
-							<Button className="mx-auto !mt-4" type="submit" loading={userDetailsButtonLoading}>
-								Save Details
-							</Button>
+								<Button className="mx-auto !mt-4" type="submit" loading={userDetailsButtonLoading}>
+									Save Details
+								</Button>
+							</Fieldset>
 						</form>
-						<form className="max-w-4xl mx-auto space-y-2" onSubmit={onUserPasswordSubmit} ref={userPasswordFormRef}>
-							<h1 className="text-3xl font-bold">Password</h1>
-							<TextInput
-								label="Current Password"
-								id="currentPassword"
-								name="currentPassword"
-								placeholder="Password"
-								type="password"
-								error={currentPasswordError}
-							/>
-							<PasswordInputs passwordLabel={passwordLabel} passwordError={passwordError} confirmPasswordError={confirmPasswordError}/>
+						<form className="max-w-4xl mx-auto space-y-2" onSubmit={onChangePasswordSubmit} ref={changePasswordFormRef}>
+							<Fieldset title="Password">
+								<TextInput
+									label="Current Password"
+									id="currentPassword"
+									name="currentPassword"
+									placeholder="Password"
+									type="password"
+									error={currentPasswordError}
+								/>
+								<PasswordInputs passwordLabel={passwordLabel} passwordError={passwordError} confirmPasswordError={confirmPasswordError}/>
 
-							{userPasswordErrorText && <p className="text-red-500 text-center mt-4">{userPasswordErrorText}</p>}
+								{changePasswordErrorText && <p className="text-red-500 text-center mt-4">{changePasswordErrorText}</p>}
+								{changePasswordSuccessText && <p className="text-green-600 text-center mt-4">{changePasswordSuccessText}</p>}
 
-							<Button className="mx-auto !mt-4" type="submit" loading={userPasswordButtonLoading}>
-								Update Password
-							</Button>
+								<Button className="mx-auto !mt-4" type="submit" loading={changePasswordButtonLoading}>
+									Update Password
+								</Button>
+							</Fieldset>
 						</form>
 					</>
 				) : (
 					<form className="max-w-lg mx-auto space-y-2" onSubmit={onUserCreateSubmit} ref={userCreateFormRef}>
-						<h1 className="text-3xl font-bold">Account Details</h1>
-						<UserDetailsInputs usernameError={usernameError} emailError={emailError}/>
+						<Fieldset title="Account Details">
+							<UserDetailsInputs usernameError={usernameError} emailError={emailError}/>
+							<br/>
+						</Fieldset>
 
-						<h1 className="text-3xl font-bold !mt-4">Password</h1>
-						<PasswordInputs passwordLabel={passwordLabel} passwordError={passwordError} confirmPasswordError={confirmPasswordError}/>
+						<Fieldset title="Password">
+							<PasswordInputs passwordLabel={passwordLabel} passwordError={passwordError} confirmPasswordError={confirmPasswordError}/>
+							<br/>
+						</Fieldset>
 
 						{userCreateErrorText && <p className="text-red-500 text-center mt-4">{userCreateErrorText}</p>}
 

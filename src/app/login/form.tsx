@@ -8,7 +8,7 @@ import makeApiRequest from './../utils/makeApiRequest';
 
 import {useState} from 'react';
 
-import type {LoginApiResponse} from './../types.d';
+import type {BasicApiResponse} from './../types.d';
 import type {FormEvent} from 'react';
 
 interface Props {
@@ -42,7 +42,7 @@ export default function LoginForm({redirect}: Props) {
 		}
 
 		try {
-			const {successful} = await makeApiRequest<LoginApiResponse>('login', body);
+			const {successful} = await makeApiRequest<BasicApiResponse>('login', body);
 
 			if (successful) {
 				window.location.href = redirect;
@@ -59,30 +59,26 @@ export default function LoginForm({redirect}: Props) {
 	}
 
 	return (
-		<form className="max-w-lg mx-auto" onSubmit={onLoginSubmit}>
-			<div className="mt-8">
-				<TextInput
-					label="Email"
-					id="email"
-					name="email"
-					placeholder="you@example.com"
-					type="text"
-					tabIndex={1}
-					error={emailError}
-				/>
-			</div>
-			<div className="mt-6">
-				<TextInput
-					label="Password"
-					labelLink={{href: `/password-reset`, text: 'Forgot password?'}}
-					id="password"
-					name="password"
-					placeholder="Password"
-					type="password"
-					tabIndex={2}
-					error={passwordError}
-				/>
-			</div>
+		<form className="max-w-lg mx-auto space-y-6 mt-8" onSubmit={onLoginSubmit}>
+			<TextInput
+				label="Email"
+				id="email"
+				name="email"
+				placeholder="you@example.com"
+				type="text"
+				tabIndex={1}
+				error={emailError}
+			/>
+			<TextInput
+				label="Password"
+				labelLink={{href: `/password-reset`, text: 'Forgot password?'}}
+				id="password"
+				name="password"
+				placeholder="Password"
+				type="password"
+				tabIndex={2}
+				error={passwordError}
+			/>
 			{errorText && <p className="text-red-500 text-center mt-4">{errorText}</p>}
 			<Button className="mx-auto mt-8" type="submit" loading={loggingIn}>
 				Log in

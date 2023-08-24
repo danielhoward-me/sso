@@ -1,6 +1,6 @@
 import {Client} from 'pg';
 
-import type {RawSession, RawUser, UserLoginData} from './types.d';
+import type {RawSession, RawUser} from './types.d';
 import type {QueryResult, QueryResultRow} from 'pg';
 
 class Database {
@@ -68,7 +68,7 @@ class Database {
 		const extraQuerySql = extraQueries?.map((query) => {
 			parameters.push(query.value);
 			return `AND ${query.name} ${query.negate ? '!' : ''}= $${parameterIndex++}`;
-		}).join('');
+		}).join('') || '';
 
 		const {rows} = await this.query<{exists: boolean}>(
 			`SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${field} = $1 ${extraQuerySql}) AS exists`,
@@ -117,13 +117,22 @@ class Database {
 		return rows[0];
 	}
 
-	public async getUserLoginData(email: string): Promise<UserLoginData> {
-		const {rows} = await this.query<UserLoginData>(
-			`SELECT id, password FROM users WHERE email = $1`,
+	public async getUserId(email: string): Promise<string | null> {
+		const {rows} = await this.query<{id: string | null}>(
+			`SELECT id FROM users WHERE email = $1`,
 			[email],
 		);
 
-		return rows[0];
+		return rows[0]?.id;
+	}
+
+	public async getUserPassword(userId: string): Promise<string | null> {
+		const {rows} = await this.query<{password: string | null}>(
+			`SELECT password FROM users WHERE id = $1`,
+			[userId],
+		);
+
+		return rows[0].password;
 	}
 
 	public async createUser(userId: string, username: string, email: string, password: string) {
@@ -137,6 +146,13 @@ class Database {
 		await this.query(
 			'UPDATE users SET username = $1, email = $2 WHERE id = $3',
 			[username, email, userId],
+		);
+	}
+
+	public async changeUserPassword(userId: string, password: string) {
+		await this.query(
+			'UPDATE users SET password = $1 WHERE id = $2',
+			[password, userId],
 		);
 	}
 }

@@ -11,6 +11,7 @@ import Image from 'next/image';
 import {useState} from 'react';
 
 import type {ColourScheme} from './../constants';
+import type {Dispatch, SetStateAction} from 'react';
 
 export interface LinkProps {
 	name: string;
@@ -64,6 +65,8 @@ function NavBarElement({children, indent}: {children: React.ReactNode, indent?: 
 	);
 }
 
+export let changeUsername: Dispatch<SetStateAction<string>>;
+
 interface Link {
 	name: string;
 	href: string;
@@ -80,11 +83,16 @@ interface NavBarProps {
 export function NavBarContent({
 	colourScheme,
 	loggedIn,
-	username,
+	username: defaultUsername,
 	profilePicture,
 }: NavBarProps) {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+
+	// Make some parts controlled by states so they can be editted on
+	// the account page without force reloading
+	const [username, setUsername] = useState(defaultUsername);
+	changeUsername = setUsername;
 
 	const accountQueryString = getRedirectQueryFromCurrentPage();
 
@@ -112,8 +120,11 @@ export function NavBarContent({
 						<div className="relative flex h-16 items-center justify-between">
 							<div className="absolute left-0 flex items-center sm:hidden">
 								<NavBarButton onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-									<Bars3Icon className={`w-6 h-6 ${mobileMenuOpen ? 'hidden' : ''}`}/>
-									<XMarkIcon className={`w-6 h-6 ${mobileMenuOpen ? '' : 'hidden'}`}/>
+									{mobileMenuOpen ? (
+										<XMarkIcon className="w-6 h-6"/>
+									) : (
+										<Bars3Icon className="w-6 h-6"/>
+									)}
 								</NavBarButton>
 							</div>
 							<div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">

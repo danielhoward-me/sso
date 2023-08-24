@@ -1,20 +1,22 @@
-import {CookieName, SESSION_COOKIE_MAX_AGE} from './../constants';
+import {setSessionHasUser} from './';
+import {CookieName, SESSION_COOKIE_MAX_AGE} from './../../constants';
 
 import {NextResponse} from 'next/server';
 
-import type {SessionApiRequestBody, RawSession} from './types.d';
+import type {SessionApiRequestBody, RawSession} from './../types.d';
 import type {NextURL} from 'next/dist/server/web/next-url';
 import type {NextRequest} from 'next/server';
 
 // Called by middleware to make a request to the session API
-export async function loadSession(req: NextRequest): Promise<NextResponse> {
-	if (req.nextUrl.pathname === '/api/session') return NextResponse.next();
+export async function loadSession(req: NextRequest): Promise<NextResponse | void> {
+	if (req.nextUrl.pathname === '/api/session') return;
 
 	const ip = req.ip ?? '::1';
 	const sessionId = req.cookies.get(CookieName.SESSION)?.value;
 
-	const finalSessionId = await makeSessionRequest(req.nextUrl, {sessionId, ip});
-	if (finalSessionId === sessionId) return NextResponse.next();
+	const {sessionId: finalSessionId, sessionHasUser} = await makeSessionRequest(req.nextUrl, {sessionId, ip});
+	setSessionHasUser(finalSessionId, sessionHasUser);
+	if (finalSessionId === sessionId) return;
 
 	// If allowing to page to go through, set the session cookie
 	// won't have updated
@@ -25,7 +27,10 @@ export async function loadSession(req: NextRequest): Promise<NextResponse> {
 	return res;
 }
 
-async function makeSessionRequest(url: NextURL, body: SessionApiRequestBody): Promise<string> {
+async function makeSessionRequest(url: NextURL, body: SessionApiRequestBody): Promise<{
+	sessionId: string;
+	sessionHasUser: boolean;
+}> {
 	const request = await fetch(`http://localhost:${url.port}/api/session`, {
 		method: 'POST',
 		headers: {
@@ -47,5 +52,8 @@ async function makeSessionRequest(url: NextURL, body: SessionApiRequestBody): Pr
 	}
 
 	const session = await request.json() as RawSession;
-	return session.id;
+	return {
+		sessionId: session.id,
+		sessionHasUser: Boolean(session.user_id),
+	};
 }

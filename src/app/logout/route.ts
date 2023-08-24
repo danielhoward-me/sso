@@ -1,4 +1,4 @@
-import {saveSession} from './../../server/session';
+import {saveSession} from './../../server/session/session';
 
 import {headers} from 'next/headers';
 import {NextResponse} from 'next/server';

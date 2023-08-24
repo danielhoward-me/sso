@@ -93,7 +93,7 @@ export const userDetailsValidationData: ValidationData = {
 	inputs: userDetailsValidationInputs,
 	capitalise: true,
 };
-export const userPasswordValidationData: ValidationData = {
+export const changePasswordValidationData: ValidationData = {
 	inputs: {
 		...passwordValidationInputs,
 		currentPassword: {
@@ -102,4 +102,28 @@ export const userPasswordValidationData: ValidationData = {
 		},
 	},
 	capitalise: true,
+};
+
+interface ValidationDataMapEntry {
+	validationData: ValidationData;
+	requiresAccount: boolean;
+}
+export const apiValidationDataMap: {[key: string]: ValidationDataMapEntry} = {
+	// Session api has its own authentication
+	login: {
+		validationData: loginPageValidationData,
+		requiresAccount: false,
+	},
+	signup: {
+		validationData: signupPageValidationData,
+		requiresAccount: false,
+	},
+	edituserdetails: {
+		validationData: userDetailsValidationData,
+		requiresAccount: true,
+	},
+	changepassword: {
+		validationData: changePasswordValidationData,
+		requiresAccount: true,
+	},
 };

@@ -1,10 +1,8 @@
-import {loginPageValidationData} from './../../../inputs';
 import {loginUser} from './../../../server/user-authentication';
-import validate from './../../../validate';
 
 import {NextResponse} from 'next/server';
 
-import type {LoginApiResponse} from './../../types.d';
+import type {BasicApiResponse} from './../../types.d';
 import type {NextRequest} from 'next/server';
 
 interface RequestBody {
@@ -13,12 +11,8 @@ interface RequestBody {
 }
 
 export async function POST(req: NextRequest) {
-	const body = await req.json();
-	const validationData = validate(loginPageValidationData, body);
-	if (Object.keys(validationData).length > 0) return NextResponse.json({error: validationData}, {status: 400});
-
-	const data = body as RequestBody;
+	const data = await req.json() as RequestBody;
 	const isCorrect = await loginUser(data.email, data.password);
 
-	return NextResponse.json<LoginApiResponse>({successful: isCorrect});
+	return NextResponse.json<BasicApiResponse>({successful: isCorrect});
 }
