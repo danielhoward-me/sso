@@ -1,7 +1,11 @@
 import Link from './link';
 import sanitiseProps from './sanitise-props';
 
-export type TextInputProps = {
+import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
+import EyeSlashIcon from '@heroicons/react/24/solid/EyeSlashIcon';
+import {useState} from 'react';
+
+type TextInputProps = {
 	label: string;
 	error?: string;
 	labelLink?: InputLabelLink;
@@ -11,7 +15,9 @@ interface InputLabelLink {
 	text: string;
 }
 
-export function TextInput(props: TextInputProps) {
+export default function TextInput(props: TextInputProps) {
+	const [passwordShowing, setPasswordShowing] = useState(false);
+
 	const inputProps = sanitiseProps(props, [
 		'label',
 		'labelLink',
@@ -20,7 +26,7 @@ export function TextInput(props: TextInputProps) {
 	return (
 		<div className="text-left">
 			<div className="flex">
-				<label htmlFor={props.id} className="text-gray-800 dark:text-gray-300 text-md font-bold justify-start">
+				<label htmlFor={props.id} className="text-gray-800 dark:text-gray-300 text-md font-bold justify-start select-none">
 					{props.label} {props.required && <span className="text-red-500">*</span>}
 				</label>
 				{props.labelLink && (
@@ -31,12 +37,19 @@ export function TextInput(props: TextInputProps) {
 					</div>
 				)}
 			</div>
-			<input
-				className={`appearance-none shadow border-2 rounded w-full py-2 px-3 text-gray-700 ring-0 focus:outline-none focus:ring-2 mt-2 mb-1 ring-opacity-50 ${props.error ? 'ring-red-400 border-red-500' : 'ring-blue-500'}`}
-				{...inputProps}
-				// required should be handled by the validate function
-				required={false}
-			/>
+			<div className="relative">
+				{props.type === 'password' && (
+					<div className="absolute right-2 top-1/2 -translate-y-[calc(50%-2px)] text-gray-800 w-8 h-8 cursor-pointer" onClick={() => setPasswordShowing(!passwordShowing)}>
+						<EyeIcon className={passwordShowing ? '' : 'hidden'}/>
+						<EyeSlashIcon className={passwordShowing ? 'hidden' : ''}/>
+					</div>
+				)}
+				<input
+					{...inputProps}
+					className={`appearance-none shadow border-2 rounded w-full py-2 px-3 text-gray-700 ring-0 focus:outline-none focus:ring-2 mt-2 mb-1 ring-opacity-50 ${props.error ? 'ring-red-400 border-red-500' : 'ring-blue-500'} ${props.type === 'password' ? 'pr-11' : ''}`}
+					type={props.type === 'password' ? (passwordShowing ? 'text' : 'password') : props.type}
+				/>
+			</div>
 			{props.error && (
 				<span className="text-red-500">
 					{props.error}

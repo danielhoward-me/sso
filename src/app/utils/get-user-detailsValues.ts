@@ -1,4 +1,4 @@
-import type User from '../../server/user';
+import type User from './../../server/user';
 
 export interface UserDetailsValues {
 	username: string;

@@ -13,7 +13,7 @@ import {useState} from 'react';
 import type {ColourScheme} from './../constants';
 import type {Dispatch, SetStateAction} from 'react';
 
-export interface LinkProps {
+interface LinkProps {
 	name: string;
 	href: string;
 	border?: boolean;
@@ -22,7 +22,7 @@ export interface LinkProps {
 	indent?: boolean;
 }
 
-export function NavbarLink(props: LinkProps) {
+function NavbarLink(props: LinkProps) {
 	return (
 		<a
 			href={props.href}

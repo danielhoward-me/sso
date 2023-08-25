@@ -34,7 +34,7 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint",
+		"lint": "eslint --ext ts --ext tsx --max-warnings 0 src dev",
 		"tool": "bash ./dev/run-tool"
 	}
 }

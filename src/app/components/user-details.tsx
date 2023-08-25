@@ -7,7 +7,7 @@ import {changeUsername} from './../navbar-elements';
 import makeApiRequest from './../utils/make-api-request';
 import Button from './button';
 import Fieldset from './fieldset';
-import {TextInput} from './input';
+import TextInput from './input';
 
 import Image from 'next/image';
 import {useRef, useState} from 'react';
@@ -219,8 +219,8 @@ export default function UserDetails({user, redirect}: UserDetailsProps) {
 									id="currentPassword"
 									name="currentPassword"
 									placeholder="Password"
-									type="password"
 									error={currentPasswordError}
+									type="password"
 								/>
 								<PasswordInputs passwordLabel={passwordLabel} passwordError={passwordError} confirmPasswordError={confirmPasswordError}/>
 
@@ -306,16 +306,16 @@ function PasswordInputs({passwordLabel, passwordError, confirmPasswordError}: Pa
 				id="password"
 				name="password"
 				placeholder={passwordLabel}
-				type="password"
 				error={passwordError}
+				type="password"
 			/>
 			<TextInput
 				label={confirmPasswordLabel}
 				id="confirmPassword"
 				name="confirmPassword"
 				placeholder={confirmPasswordLabel}
-				type="password"
 				error={confirmPasswordError}
+				type="password"
 			/>
 		</>
 	);

@@ -3,7 +3,7 @@
 import {loginPageValidationData} from './../../inputs';
 import validate from './../../validate';
 import Button from './../components/button';
-import {TextInput} from './../components/input';
+import TextInput from './../components/input';
 import makeApiRequest from './../utils/make-api-request';
 
 import {useState} from 'react';
