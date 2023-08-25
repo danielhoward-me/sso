@@ -1,13 +1,13 @@
 import {ColourScheme, CookieName, DEFAULT_COLOUR_SCHEME} from './../constants';
 import {getSession} from './../server/session';
-import {NavBarContent} from './navBarElements';
+import {NavbarContent} from './navbar-elements';
 
 import {cookies as getCookies} from 'next/headers';
 
-export default function NavBar() {
+export default function Navbar() {
 	const session = getSession();
 	return (
-		<NavBarContent
+		<NavbarContent
 			colourScheme={getColourScheme()}
 			loggedIn={session.user !== null}
 			username={session.user?.username}

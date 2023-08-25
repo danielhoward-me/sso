@@ -1,5 +1,5 @@
 import {loadSession} from './server/session/sessionApi';
-import {validateApiRequest} from './validateApiRequest';
+import {validateApiRequest} from './validate-api-request';
 
 import {NextResponse} from 'next/server';
 

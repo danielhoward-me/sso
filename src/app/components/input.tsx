@@ -1,7 +1,7 @@
 import Link from './link';
-import sanitiseProps from './sanitiseProps';
+import sanitiseProps from './sanitise-props';
 
-type TextInputProps = {
+export type TextInputProps = {
 	label: string;
 	error?: string;
 	labelLink?: InputLabelLink;

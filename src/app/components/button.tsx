@@ -1,5 +1,5 @@
 import LoadingSpinner from './loading-spinner';
-import sanitiseProps from './sanitiseProps';
+import sanitiseProps from './sanitise-props';
 
 interface ButtonProps extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
 	loading?: boolean;

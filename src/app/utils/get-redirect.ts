@@ -1,8 +1,8 @@
-import {DEFAULT_POST_LOGIN_REDIRECT, REDIRECT_QUERY_PARAMETER_NAME} from './../../constants';
+import {DEFAULT_POST_LOGIN_REDIRECT, REDIRECT_QUERY_PARAMETER_NAME} from '../../constants';
 
 import {redirect, usePathname, useSearchParams} from 'next/navigation';
 
-import type {SearchParamsProps} from './../types.d';
+import type {SearchParamsProps} from '../types';
 
 export function getRedirect(searchParams: SearchParamsProps['searchParams'], pagePath: string): string {
 	const redirectParam = searchParams[REDIRECT_QUERY_PARAMETER_NAME];

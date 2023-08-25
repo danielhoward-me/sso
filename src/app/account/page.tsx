@@ -1,8 +1,8 @@
 import {getSession} from './../../server/session';
 import MiddleIsland from './../components/middleIsland';
-import UserDetails from './../components/userDetails';
-import {getRedirectQueryForPage} from './../utils/getRedirect';
-import getUserDetailsValues from './../utils/getUserDetailsValues';
+import UserDetails from './../components/user-details';
+import {getRedirectQueryForPage} from './../utils/get-redirect';
+import getUserDetailsValues from './../utils/get-user-detailsValues';
 
 import {redirect} from 'next/navigation';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import {ColourScheme, CookieName, DEFAULT_COLOUR_SCHEME} from './../constants';
-import {NavBarButton} from './navBarElements';
+import {NavbarButton} from './navbar-elements';
 
 import ComputerDesktopIcon from '@heroicons/react/24/outline/ComputerDesktopIcon';
 import MoonIcon from '@heroicons/react/24/outline/MoonIcon';
@@ -29,9 +29,9 @@ export function ColourSchemeButton({colourScheme}: {colourScheme: ColourScheme})
 	}
 
 	return (
-		<NavBarButton onClick={changeColourScheme}>
+		<NavbarButton onClick={changeColourScheme}>
 			{icon}
-		</NavBarButton>
+		</NavbarButton>
 	);
 }
 

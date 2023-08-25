@@ -1,7 +1,7 @@
 import {getSession} from './../../server/session';
 import Link from './../components/link';
 import MiddleIsland from './../components/middleIsland';
-import {getRedirect, getRedirectQueryForPage} from './../utils/getRedirect';
+import {getRedirect, getRedirectQueryForPage} from './../utils/get-redirect';
 import LoginForm from './form';
 
 import {redirect} from 'next/navigation';

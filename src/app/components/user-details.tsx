@@ -3,8 +3,8 @@
 import {SIGNUP_PLACEHOLDER_USERNAMES} from './../../constants';
 import {signupPageValidationData, userDetailsValidationData, changePasswordValidationData} from './../../inputs';
 import validate from './../../validate';
-import {changeUsername} from './../navBarElements';
-import makeApiRequest from './../utils/makeApiRequest';
+import {changeUsername} from './../navbar-elements';
+import makeApiRequest from './../utils/make-api-request';
 import Button from './button';
 import Fieldset from './fieldset';
 import {TextInput} from './input';
@@ -14,7 +14,7 @@ import {useRef, useState} from 'react';
 
 import type {ValidationData} from './../../validate';
 import type {AccountDetailsApiResponse, BasicApiResponse} from './../types.d';
-import type {UserDetailsValues} from './../utils/getUserDetailsValues';
+import type {UserDetailsValues} from './../utils/get-user-detailsValues';
 import type {FormEvent} from 'react';
 
 

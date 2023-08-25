@@ -1,6 +1,6 @@
 import './../styles/tailwind.css';
 
-import NavBar, {shouldBeDark} from './navBar';
+import Navbar, {shouldBeDark} from './navbar';
 
 import type {Metadata} from 'next';
 
@@ -30,7 +30,7 @@ export default async function RootLayout({
 	return (
 		<html lang="en" className={shouldBeDark() ? 'dark' : ''}>
 			<body className="dark:bg-gray-800 dark:bg-opacity-95 dark:text-white bg-gray-100">
-				<NavBar/>
+				<Navbar/>
 				<main className="translate-y-16">
 					{children}
 				</main>
