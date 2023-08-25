@@ -1,5 +1,5 @@
 import './../styles/tailwind.css';
-
+import ModalHandler from './modal-handler';
 import Navbar, {shouldBeDark} from './navbar';
 
 import type {Metadata} from 'next';
@@ -25,11 +25,12 @@ export const metadata: Metadata = {
 export default async function RootLayout({
 	children,
 }: {
-	children: React.ReactNode
+	children: JSX.Element
 }) {
 	return (
 		<html lang="en" className={shouldBeDark() ? 'dark' : ''}>
 			<body className="dark:bg-gray-800 dark:bg-opacity-95 dark:text-white bg-gray-100">
+				<ModalHandler/>
 				<Navbar/>
 				<main className="translate-y-16">
 					{children}

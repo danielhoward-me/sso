@@ -40,10 +40,15 @@ export default function validate(validationData: ValidationData, body: {[key: st
 			});
 		}
 
-		if (inputValidationData.type === 'number') {
-			if (inputValidationData.required && inputValue === undefined) {
+		if (
+			(inputValidationData.type === 'number' && inputValue === undefined) ||
+			(inputValidationData.type === 'string' && !inputValue)
+		) {
+			if (inputValidationData.required) {
 				errorMessages[inputName] = `${inputDisplayName} is required`;
-			} else if (typeof inputValue !== 'number') {
+			}
+		} else if (inputValidationData.type === 'number') {
+			if (typeof inputValue !== 'number') {
 				errorMessages[inputName] = `${inputDisplayName} must be a number`;
 			} else {
 				if (inputValidationData.min !== undefined && inputValue < inputValidationData.min) {
@@ -53,9 +58,7 @@ export default function validate(validationData: ValidationData, body: {[key: st
 				}
 			}
 		} else if (inputValidationData.type === 'string') {
-			if (inputValidationData.required && !inputValue) {
-				errorMessages[inputName] = `${inputDisplayName} is required`;
-			} else if (typeof inputValue !== 'string') {
+			if (typeof inputValue !== 'string') {
 				errorMessages[inputName] = `${inputDisplayName} must be a string`;
 			} else {
 				if (inputValidationData.minLength !== undefined && inputValue.length < inputValidationData.minLength) {

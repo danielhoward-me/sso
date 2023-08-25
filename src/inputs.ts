@@ -40,7 +40,7 @@ const userDetailsValidationInputs: ValidationDataInputs = {
 		required: true,
 		patterns: [
 			{
-				pattern: /\S/,
+				pattern: /^\S*$/,
 				message: 'must not contain any spaces',
 			},
 		],

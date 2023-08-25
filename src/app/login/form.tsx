@@ -11,11 +11,7 @@ import {useState} from 'react';
 import type {BasicApiResponse} from './../types.d';
 import type {FormEvent} from 'react';
 
-interface Props {
-	redirect: string;
-}
-
-export default function LoginForm({redirect}: Props) {
+export default function LoginForm({redirect}: {redirect: string}) {
 	const [loggingIn, setLoggingIn] = useState(false);
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');

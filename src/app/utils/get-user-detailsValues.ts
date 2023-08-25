@@ -6,9 +6,7 @@ export interface UserDetailsValues {
 	profilePicture: string;
 }
 
-export default function getUserDetailsValues(user: User | null): UserDetailsValues | null {
-	if (user === null) return null;
-
+export default function getUserDetailsValues(user: User): UserDetailsValues {
 	return {
 		username: user.username,
 		email: user.email,

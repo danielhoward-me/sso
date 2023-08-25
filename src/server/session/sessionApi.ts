@@ -44,7 +44,7 @@ async function makeSessionRequest(url: NextURL, body: SessionApiRequestBody): Pr
 		switch (request.status) {
 		case 400: {
 			const error = await request.json();
-			throw new Error(`Request to session API failed: ${error.error}`);
+			throw new Error(`Request to session API failed: ${JSON.stringify(error.error)}`);
 		}
 		default:
 			throw new Error('Request to session API failed');

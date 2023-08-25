@@ -11,7 +11,14 @@ export interface Session<T = null> {
 }
 
 // Should match schema.sql profile_picture
-export type ProfilePictureType = 'custom' | 'identicon' | 'monsterid' | 'wavatar' | 'retro' | 'robohash';
+export enum ProfilePictureType {
+	Custom = 'custom',
+	Identicon = 'identicon',
+	MonsterId = 'monsterid',
+	Wavatar = 'wavatar',
+	Retro = 'retro',
+	Robohash = 'robohash',
+}
 export interface RawUser {
 	id: string;
 	username: string;

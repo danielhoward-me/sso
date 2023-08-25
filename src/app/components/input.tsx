@@ -26,7 +26,7 @@ export default function TextInput(props: TextInputProps) {
 	return (
 		<div className="text-left">
 			<div className="flex">
-				<label htmlFor={props.id} className="text-gray-800 dark:text-gray-300 text-md font-bold justify-start select-none">
+				<label htmlFor={props.id} className="text-gray-800 dark:text-gray-300 text-md font-bold justify-start">
 					{props.label} {props.required && <span className="text-red-500">*</span>}
 				</label>
 				{props.labelLink && (
@@ -39,7 +39,7 @@ export default function TextInput(props: TextInputProps) {
 			</div>
 			<div className="relative">
 				{props.type === 'password' && (
-					<div className="absolute right-2 top-1/2 -translate-y-[calc(50%-2px)] text-gray-800 w-8 h-8 cursor-pointer" onClick={() => setPasswordShowing(!passwordShowing)}>
+					<div className="absolute right-2 top-1/2 -translate-y-[calc(50%-2px)] text-gray-800 w-8 h-8 cursor-pointer select-none" onClick={() => setPasswordShowing(!passwordShowing)}>
 						<EyeIcon className={passwordShowing ? '' : 'hidden'}/>
 						<EyeSlashIcon className={passwordShowing ? 'hidden' : ''}/>
 					</div>

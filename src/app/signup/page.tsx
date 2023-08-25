@@ -1,7 +1,7 @@
 import {getSession} from './../../server/session';
-import MiddleIsland from './../components/middleIsland';
-import UserDetails from './../components/user-details';
+import MiddleIsland from './../components/middle-island';
 import {getRedirect} from './../utils/get-redirect';
+import SignupForm from './form';
 
 import {redirect} from 'next/navigation';
 
@@ -25,7 +25,7 @@ export default function SignupPage({searchParams}: SearchParamsProps) {
 	return (
 		<MiddleIsland>
 			<h1 className="text-6xl font-bold pb-2">Sign up for Your Account</h1>
-			<UserDetails user={null} redirect={redirectPath}/>
+			<SignupForm redirect={redirectPath}/>
 		</MiddleIsland>
 	);
 }

@@ -11,7 +11,6 @@ import Image from 'next/image';
 import {useState} from 'react';
 
 import type {ColourScheme} from './../constants';
-import type {Dispatch, SetStateAction} from 'react';
 
 interface LinkProps {
 	name: string;
@@ -65,7 +64,7 @@ function NavbarElement({children, indent}: {children: React.ReactNode, indent?: 
 	);
 }
 
-export let changeUsername: Dispatch<SetStateAction<string>>;
+export let changeUsername: (username: string) => void;
 
 interface Link {
 	name: string;
@@ -114,7 +113,7 @@ export function NavbarContent({
 
 	return (
 		<>
-			<nav className="fixed left-0 right-0 top-0 z-50">
+			<nav className="fixed left-0 right-0 top-0 z-30">
 				<div className="shadow-lg dark:bg-gray-800 bg-white">
 					<div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
 						<div className="relative flex h-16 items-center justify-between">
@@ -133,7 +132,7 @@ export function NavbarContent({
 										src="/static/img/icon.svg"
 										alt="Accounts icon"
 										width={32} height={32}
-										className="dark:filter dark:invert"
+										className="dark:filter dark:invert select-none"
 									/>
 								</div>
 								<div className="hidden sm:ml-6 sm:block">
@@ -213,7 +212,7 @@ export function NavbarContent({
 			</nav>
 
 			<div
-				className={`fixed top-0 left-0 w-full h-full bg-black sm:bg-none bg-opacity-0 ${mobileMenuOpen ? 'bg-opacity-30' : ''} sm:bg-opacity-0 z-10 pointer-events-none ${mobileMenuOpen || accountMenuOpen ? 'pointer-events-auto' : ''}`}
+				className={`fixed top-0 left-0 w-full h-full bg-black sm:bg-none bg-opacity-0 ${mobileMenuOpen ? 'bg-opacity-30' : ''} sm:bg-opacity-0 z-20 ${mobileMenuOpen || accountMenuOpen ? '' : 'pointer-events-none'}`}
 				onClick={() => {
 					setMobileMenuOpen(false);
 					setAccountMenuOpen(false);
