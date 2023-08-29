@@ -117,7 +117,9 @@ export default function AccountDetails({user}: {user: UserDetailsValues}) {
 	return (
 		<>
 			<Modal open={profilePictureMenuOpen}>
-				<p>test</p>
+				<div className="flex items-center">
+					test
+				</div>
 			</Modal>
 			<MiddleIsland fullWidth>
 				<h1 className="text-6xl font-bold pb-2">View Your Account</h1>
