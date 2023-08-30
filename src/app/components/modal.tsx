@@ -8,15 +8,17 @@ interface ModalProps {
 }
 
 export default function Modal({open, children}: ModalProps) {
-	const ref = useRef<Element | null>(null);
+	const containerref = useRef<Element | null>(null);
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		ref.current = document.querySelector<HTMLElement>('#modal');
+		const container = document.createElement('div');
+		document.querySelector<HTMLElement>('#modal')?.appendChild(container);
+		containerref.current = container;
 		setMounted(true);
 	}, []);
 
-	return (mounted && ref.current) ? createPortal(
+	return (mounted && containerref.current) ? createPortal(
 		(
 			<>
 				<div className={`absolute top-0 left-0 z-50 ${open ? '' : 'hidden'} w-full`}>
@@ -30,6 +32,6 @@ export default function Modal({open, children}: ModalProps) {
 					className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-0 ${open ? 'bg-opacity-30' : ''} z-40 ${open ? '' : 'pointer-events-none'}`}
 				/>
 			</>
-		), ref.current,
+		), containerref.current,
 	) : null;
 }

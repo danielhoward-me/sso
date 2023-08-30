@@ -132,7 +132,7 @@ export function NavbarContent({
 										src="/static/img/icon.svg"
 										alt="Accounts icon"
 										width={32} height={32}
-										className="dark:filter dark:invert select-none"
+										className="dark:filter dark:invert select-none w-auto h-auto"
 									/>
 								</div>
 								<div className="hidden sm:ml-6 sm:block">
