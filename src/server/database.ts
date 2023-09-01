@@ -1,24 +1,19 @@
 import {Client} from 'pg';
 
 import type {RawSession, RawUser} from './types.d';
-import type {QueryResult, QueryResultRow} from 'pg';
+import type {ClientConfig, QueryResult, QueryResultRow} from 'pg';
 
 class Database {
-	private client: Client = new Client({
-		user: process.env.PGUSER,
-		host: process.env.PGHOST,
-		password: process.env.PGPASSWORD,
-		database: process.env.PGDATABASE,
-		port: Number(process.env.PGPORT) || 5432,
-	});
+	private client: Client;
 	private connectPromise: Promise<void> | null;
 
 	public constructor() {
+		this.createClient();
 		this.connect();
 	}
 
 	private async connect() {
-		console.log('Connecting to database');
+		console.log(`Connecting to database ${this.client.database}`);
 		try {
 			this.connectPromise = this.client.connect();
 			await this.connectPromise;
@@ -33,6 +28,30 @@ class Database {
 		if (this.connectPromise) {
 			await this.connectPromise;
 		}
+	}
+
+	// This function is only used in development
+	public async changeDatabase(database: string) {
+		if (process.env.NODE_ENV === 'production') {
+			throw new Error('This function should never be used in production');
+		}
+
+		console.log(`Disconnecting from database ${this.client.database}`);
+		await this.client.end();
+
+		this.createClient({database});
+		await this.connect();
+	}
+
+	private async createClient(config?: ClientConfig) {
+		this.client = new Client({
+			user: process.env.PGUSER,
+			host: process.env.PGHOST,
+			password: process.env.PGPASSWORD,
+			database: process.env.PGDATABASE,
+			port: Number(process.env.PGPORT) || 5432,
+			...config,
+		});
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

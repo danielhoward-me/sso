@@ -116,11 +116,6 @@ export default function AccountDetails({user}: {user: UserDetailsValues}) {
 
 	return (
 		<>
-			<Modal open={profilePictureMenuOpen}>
-				<div className="flex items-center">
-					test
-				</div>
-			</Modal>
 			<MiddleIsland fullWidth>
 				<h1 className="text-6xl font-bold pb-2">View Your Account</h1>
 				<div className="space-y-1 mt-6">
@@ -154,6 +149,11 @@ export default function AccountDetails({user}: {user: UserDetailsValues}) {
 										</span>
 									</div>
 								</div>
+								<Modal open={profilePictureMenuOpen}>
+									<div className="flex items-center">
+										test
+									</div>
+								</Modal>
 							</Fieldset>
 						</div>
 					</div>

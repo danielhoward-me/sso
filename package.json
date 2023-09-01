@@ -1,5 +1,5 @@
 {
-	"name": "web-auth",
+	"name": "account",
 	"version": "1.0.0",
 	"main": "index.js",
 	"license": "MIT",
@@ -27,15 +27,22 @@
 		"@types/uuid": "^9.0.1",
 		"@typescript-eslint/eslint-plugin": "^5.59.7",
 		"@typescript-eslint/parser": "^5.59.7",
+		"concurrently": "^8.2.1",
 		"eslint": "^8.41.0",
 		"eslint-config-google": "^0.14.0",
 		"eslint-plugin-import": "^2.27.5"
 	},
 	"scripts": {
-		"dev": "next dev",
+		"dev": "concurrently -c auto -n DB,NEXT \"yarn dev-db\" \"yarn dev-next\"",
+		"dev-db": "docker compose -f compose.dev.yml up --build",
+		"dev-clear-db": "docker compose -f compose.dev.yml down -v",
+		"dev-next": "next dev",
 		"build": "next build",
 		"start": "next start",
 		"lint": "eslint --ext ts --ext tsx --max-warnings 0 src dev",
 		"tool": "bash ./dev/run-tool"
+	},
+	"engines": {
+		"node": "18.16.0"
 	}
 }

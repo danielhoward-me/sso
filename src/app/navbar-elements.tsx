@@ -131,8 +131,8 @@ export function NavbarContent({
 									<Image
 										src="/static/img/icon.svg"
 										alt="Accounts icon"
-										width={32} height={32}
-										className="dark:filter dark:invert select-none w-auto h-auto"
+										width={32} height={36}
+										className="dark:filter dark:invert select-none w-8 h-9"
 									/>
 								</div>
 								<div className="hidden sm:ml-6 sm:block">

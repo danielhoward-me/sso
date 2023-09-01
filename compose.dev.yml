@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+    postgres:
+        image: postgres:14.9-alpine
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_DB=account
+            - POSTGRES_PASSWORD=qwerty123
+            - POSTGRES_USER=account
+        volumes:
+            - /var/lib/postgresql/data
+            - ./dev/sql:/docker-entrypoint-initdb.d

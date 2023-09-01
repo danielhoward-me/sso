@@ -9,11 +9,15 @@ const files = [
 
 async function main() {
 	await db.waitForConnection();
+	await db.changeDatabase('postgres');
 
-	const databaseName = process.env.PGDATABASE;
-	const databaseUser = process.env.PGUSER;
+	const databaseName = process.env.PGDATABASE || '';
+
 	console.log(`Reseting database ${databaseName}`);
-	await db.query(`DROP OWNED BY ${databaseUser};`);
+	await db.query(`DROP DATABASE ${databaseName};`);
+	await db.query(`CREATE DATABASE ${databaseName}`);
+
+	await db.changeDatabase(databaseName);
 
 	for (const file of files) {
 		const filename = `${file}.sql`;

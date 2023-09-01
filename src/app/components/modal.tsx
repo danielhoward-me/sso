@@ -29,7 +29,7 @@ export default function Modal({open, children}: ModalProps) {
 					</div>
 				</div>
 				<div
-					className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-0 ${open ? 'bg-opacity-30' : ''} z-40 ${open ? '' : 'pointer-events-none'}`}
+					className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-0 z-40 ${open ? 'bg-opacity-30' : 'pointer-events-none'}`}
 				/>
 			</>
 		), containerref.current,
