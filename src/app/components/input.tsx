@@ -1,5 +1,5 @@
+import sanitiseProps from './../utils/sanitise-props';
 import Link from './link';
-import sanitiseProps from './sanitise-props';
 
 import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
 import EyeSlashIcon from '@heroicons/react/24/solid/EyeSlashIcon';

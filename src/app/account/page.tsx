@@ -1,7 +1,7 @@
 import {getSession} from './../../server/session';
 import {getRedirectQueryForPage} from './../utils/get-redirect';
 import getUserDetailsValues from './../utils/get-user-detailsValues';
-import AccountDetails from './account-details';
+import AccountEditor from './account-editor';
 
 import {redirect} from 'next/navigation';
 
@@ -20,6 +20,6 @@ export default function AccountPage() {
 	}
 
 	return (
-		<AccountDetails user={getUserDetailsValues(session.user)}/>
+		<AccountEditor user={getUserDetailsValues(session.user)}/>
 	);
 }

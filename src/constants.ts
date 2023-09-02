@@ -24,3 +24,13 @@ export const SIGNUP_PLACEHOLDER_USERNAMES = [
 	'TechyTechie',
 	'FishFanatic',
 ];
+
+// Should match schema.sql profile_picture
+export enum ProfilePictureType {
+	Custom = 'custom',
+	Identicon = 'identicon',
+	MonsterId = 'monsterid',
+	Wavatar = 'wavatar',
+	Retro = 'retro',
+	Robohash = 'robohash',
+}

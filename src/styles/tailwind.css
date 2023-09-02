@@ -5,3 +5,7 @@
 :root {
 	--real-page-height: calc(100vh - 4rem);
 }
+
+body:has(.body-overflow-hide) {
+	overflow: hidden;
+}

@@ -33,7 +33,7 @@
 		"eslint-plugin-import": "^2.27.5"
 	},
 	"scripts": {
-		"dev": "concurrently -c auto -n DB,NEXT \"yarn dev-db\" \"yarn dev-next\"",
+		"dev": "concurrently -k -c auto -n DB,NEXT \"yarn dev-db\" \"yarn dev-next\"",
 		"dev-db": "docker compose -f compose.dev.yml up --build",
 		"dev-clear-db": "docker compose -f compose.dev.yml down -v",
 		"dev-next": "next dev",

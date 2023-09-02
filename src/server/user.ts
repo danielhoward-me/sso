@@ -1,7 +1,9 @@
+import constructProfilePicture from './construct-profile-picture';
 import db from './database';
-import {ProfilePictureType} from './types.d';
 
 import {createHash} from 'crypto';
+
+import type {ProfilePictureType} from './../constants';
 
 export default class User {
 	private loaded = false;
@@ -43,11 +45,10 @@ export default class User {
 		await this.loadPromise;
 	}
 
-	getProfilePictureUrl(forceType?: ProfilePictureType) {
+	getProfilePictureUrl(forceType?: ProfilePictureType): string {
 		if (!this.loaded) throw new Error('User not loaded');
 
-		const profilePictureType = forceType || this.profilePicture;
-		const queryString = `?d=${profilePictureType === ProfilePictureType.Custom ? 'mp' : `${profilePictureType}&f=y`}`;
-		return `https://www.gravatar.com/avatar/${this.emailHash}${queryString}`;
+		const type = forceType || this.profilePicture;
+		return constructProfilePicture(type, this.emailHash);
 	}
 }

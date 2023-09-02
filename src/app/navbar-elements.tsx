@@ -65,6 +65,7 @@ function NavbarElement({children, indent}: {children: React.ReactNode, indent?: 
 }
 
 export let changeUsername: (username: string) => void;
+export let changeProfilePictureUrl: (username: string) => void;
 
 interface Link {
 	name: string;
@@ -92,6 +93,8 @@ export function NavbarContent({
 	// the account page without force reloading
 	const [username, setUsername] = useState(defaultUsername);
 	changeUsername = setUsername;
+	const [profilePictureUrl, setProfilePictureUrl] = useState(profilePicture);
+	changeProfilePictureUrl = setProfilePictureUrl;
 
 	const accountQueryString = getRedirectQueryFromCurrentPage();
 
@@ -150,7 +153,7 @@ export function NavbarContent({
 									<div className="relative">
 										<NavbarButton onClick={() => setAccountMenuOpen(!accountMenuOpen)} hide="mobile">
 											<div className="flex space-x-2 items-center">
-												<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePicture || ''}/>
+												<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePictureUrl || ''}/>
 												<p>{username}</p>
 												<ChevronDownIcon className={`self-center w-5 h-5 transition-transform ${accountMenuOpen ? 'rotate-180' : ''}`}/>
 											</div>
@@ -180,7 +183,7 @@ export function NavbarContent({
 								<>
 									<NavbarButton onClick={() => setAccountMenuOpen(!accountMenuOpen)}>
 										<div className="flex space-x-2 items-center">
-											<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePicture || ''}/>
+											<Image className="rounded-full" width={25} height={25} alt="Account Profile Picture" src={profilePictureUrl || ''}/>
 											<p>{username}</p>
 											<ChevronDownIcon className={`self-center w-5 h-5 transition-transform ${accountMenuOpen ? 'rotate-180' : ''}`}/>
 										</div>
