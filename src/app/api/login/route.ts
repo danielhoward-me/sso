@@ -1,4 +1,5 @@
-import {loginUser} from './../../../server/user-authentication';
+import {saveSession} from './../../../server/session/session';
+import User from './../../../server/user';
 
 import {NextResponse} from 'next/server';
 
@@ -12,7 +13,8 @@ interface RequestBody {
 
 export async function POST(req: NextRequest) {
 	const data = await req.json() as RequestBody;
-	const isCorrect = await loginUser(data.email, data.password);
+	const user = await User.get(data.email, data.password);
+	if (user) saveSession(user.id);
 
-	return NextResponse.json<BasicApiResponse>({successful: isCorrect});
+	return NextResponse.json<BasicApiResponse>({successful: user !== null});
 }

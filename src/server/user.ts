@@ -1,7 +1,9 @@
 import constructProfilePicture from './construct-profile-picture';
 import db from './database';
 
+import argon2 from 'argon2';
 import {createHash} from 'crypto';
+import {v4 as uuid} from 'uuid';
 
 import type {ProfilePictureType} from './../constants';
 
@@ -22,7 +24,7 @@ export default class User {
 		this.loadPromise = this.load();
 	}
 
-	async load() {
+	private async load() {
 		if (this.loaded) return;
 
 		const rawUser = await db.getUser(this.id);
@@ -39,16 +41,77 @@ export default class User {
 		this.loaded = true;
 	}
 
-	async waitForLoad() {
+	public async waitForLoad() {
 		if (this.loaded || !this.loadPromise) return;
 
 		await this.loadPromise;
 	}
 
-	getProfilePictureUrl(forceType?: ProfilePictureType): string {
+	public getProfilePictureUrl(forceType?: ProfilePictureType): string {
 		if (!this.loaded) throw new Error('User not loaded');
 
 		const type = forceType || this.profilePicture;
 		return constructProfilePicture(type, this.emailHash);
+	}
+
+	public async usernameAvailable(username: string): Promise<boolean> {
+		return await db.entryExists('users', {field: 'username', value: username}, {field: 'id', negate: true, value: this.id});
+	}
+
+	public async emailAvailable(email: string): Promise<boolean> {
+		return await db.entryExists('users', {field: 'email', value: email}, {field: 'id', negate: true, value: this.id});
+	}
+
+	public async editDetails(username: string, email: string) {
+		await db.editUserDetails(this.id, username, email);
+	}
+
+	public async changePassword(password: string) {
+		const hashedPassword = await argon2.hash(password);
+		await db.changeUserPassword(this.id, hashedPassword);
+	}
+
+	public async isPasswordCorrect(password: string): Promise<boolean> {
+		const realPassword = await db.getUserPassword(this.id);
+		if (!realPassword) return false;
+
+		return await argon2.verify(realPassword, password);
+	}
+
+	public async changeProfilePicture(profilePicture: ProfilePictureType) {
+		await db.changeProfilePicture(this.id, profilePicture);
+	}
+
+	public static async idExists(id: string): Promise<boolean> {
+		return await db.entryExists('users', {field: 'id', value: id});
+	}
+
+	public static async usernameExists(username: string): Promise<boolean> {
+		return await db.entryExists('users', {field: 'username', value: username});
+	}
+
+	public static async emailExists(email: string): Promise<boolean> {
+		return await db.entryExists('users', {field: 'email', value: email});
+	}
+
+	public static async get(email: string, password: string): Promise<User | null> {
+		const userId = await db.getUserId(email);
+		if (!userId) return null;
+
+		const user = new User(userId);
+		await user.waitForLoad();
+		return (await user.isPasswordCorrect(password)) ? user : null;
+	}
+
+	public static async create(username: string, email: string, password: string): Promise<User> {
+		let id = '';
+		while (id === '' || await User.idExists(id)) {
+			id = uuid();
+		}
+
+		const hashedPassword = await argon2.hash(password);
+		await db.createUser(id, username, email, hashedPassword);
+
+		return new User(id);
 	}
 }

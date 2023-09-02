@@ -25,7 +25,6 @@ export default function Form({redirect}: {redirect: string}) {
 
 	const formRef = useRef<HTMLFormElement>(null);
 
-
 	async function onUserCreateSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 

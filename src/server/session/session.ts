@@ -49,7 +49,7 @@ async function loadSessionFromId(
 
 async function createSession(ip: string): Promise<RawSession> {
 	let id = '';
-	while (id === '' || await db.fieldExists('sessions', 'id', id)) {
+	while (id === '' || await db.entryExists('sessions', {field: 'id', value: id})) {
 		id = uuid();
 	}
 

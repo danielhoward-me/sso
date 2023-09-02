@@ -4,7 +4,9 @@ import Button from './../components/button';
 import {changeUsername} from './../navbar-elements';
 import makeApiRequest from './../utils/make-api-request';
 import runValidation from './../utils/run-validation';
+import {updateProfilePicutre} from './profile-picture-section';
 
+import {createHash} from 'crypto';
 import {useRef, useState} from 'react';
 
 import type {AccountDetailsApiResponse} from './../types.d';
@@ -43,9 +45,10 @@ export default function AccountDetailsSection({username, email}: Props) {
 		}
 
 		try {
-			const editUserDetailsOutcome = await makeApiRequest<AccountDetailsApiResponse>('edituserdetails', validData);
+			const editUserDetailsOutcome = await makeApiRequest<AccountDetailsApiResponse>('user/details', validData);
 			if (editUserDetailsOutcome.successful) {
 				changeUsername(validData.username);
+				updateProfilePicutre(createHash('md5').update(validData.email).digest('hex'));
 				setSuccessText('Successfully updated your account details');
 			} else {
 				if (editUserDetailsOutcome.usernameExists) {

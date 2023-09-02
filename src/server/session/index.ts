@@ -27,7 +27,11 @@ export function getSessionFromId(sessionId: string | undefined): Session {
 }
 // Only to be used when the session is guaranteed to have a user
 export function getAuthenticatedSession(): Session<never> {
-	return getSession() as Session<never>;
+	const session = getSession();
+	if (!session.user) {
+		throw new Error('getAuthenticatedSession should only be used when the session is guaranteed to have a user');
+	}
+	return session as Session<never>;
 }
 export function getSessionId(): string {
 	const cookies = getCookies();

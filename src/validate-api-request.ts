@@ -13,10 +13,17 @@ export async function validateApiRequest(req: NextRequest): Promise<NextResponse
 	const apiRoute = req.nextUrl.pathname.match(apiRequestRegex)?.[1];
 	if (!apiRoute) return;
 
-	const {validationData, requiresAccount} = apiValidationDataMap[apiRoute];
+	const {validationData, requiresAccount, requiresBearerToken} = apiValidationDataMap[apiRoute];
 
 	if (requiresAccount && !sessionHasUser(req.cookies.get(CookieName.SESSION)?.value ?? '')) {
 		return NextResponse.json({error: 'Unauthorised'}, {status: 401});
+	}
+
+	if (requiresBearerToken) {
+		const authentication = req.headers.get('authorization') ?? '';
+		const bearerToken = authentication.replace(/^Bearer /, '');
+
+		if (bearerToken !== requiresBearerToken()) return NextResponse.json({error: 'Unauthorised'}, {status: 401});
 	}
 
 	try {

@@ -1,3 +1,5 @@
+import {ProfilePictureType} from './constants';
+
 import type {ValidationData, ValidationDataInputs, StringValidationPattern} from './validate';
 
 const emailValidationPattern: StringValidationPattern = {
@@ -103,27 +105,47 @@ export const changePasswordValidationData: ValidationData = {
 	},
 	capitalise: true,
 };
+export const profilePictureValidationData: ValidationData = {
+	inputs: {
+		profilePicture: {
+			type: 'string',
+			required: true,
+			patterns: [
+				{
+					pattern: new RegExp(`^(${Object.values(ProfilePictureType).join('|')})$`),
+					message: 'should be a valid profile picture type',
+				},
+			],
+		},
+	},
+};
 
 interface ValidationDataMapEntry {
 	validationData: ValidationData;
-	requiresAccount: boolean;
+	requiresAccount?: boolean;
+	requiresBearerToken?: () => string;
 }
 export const apiValidationDataMap: {[key: string]: ValidationDataMapEntry} = {
-	// Session api has its own authentication
-	login: {
+	'session': {
+		validationData: sessionApiValidationData,
+		requiresBearerToken: () => process.env.SESSION_API_KEY || '',
+	},
+	'login': {
 		validationData: loginPageValidationData,
-		requiresAccount: false,
 	},
-	signup: {
+	'signup': {
 		validationData: signupPageValidationData,
-		requiresAccount: false,
 	},
-	edituserdetails: {
+	'user/details': {
 		validationData: userDetailsValidationData,
 		requiresAccount: true,
 	},
-	changepassword: {
+	'user/password': {
 		validationData: changePasswordValidationData,
+		requiresAccount: true,
+	},
+	'user/profile-picture': {
+		validationData: profilePictureValidationData,
 		requiresAccount: true,
 	},
 };

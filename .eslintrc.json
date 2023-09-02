@@ -28,8 +28,7 @@
 		"import/order": ["warn", {
 			"groups": [
 				["internal", "parent", "sibling", "index"],
-				"builtin",
-				"external",
+				["builtin", "external"],
 				"type"
 			],
 			"newlines-between": "always",

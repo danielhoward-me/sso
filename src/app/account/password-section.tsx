@@ -40,7 +40,7 @@ export default function PasswordSection() {
 		}
 
 		try {
-			const {successful} = await makeApiRequest<BasicApiResponse>('changepassword', validData);
+			const {successful} = await makeApiRequest<BasicApiResponse>('user/password', validData);
 			if (successful) {
 				setSuccessText('Successfully updated your password');
 
@@ -53,7 +53,7 @@ export default function PasswordSection() {
 			}
 		} catch (err) {
 			console.error(err);
-			setErrorText('There was an error when attempting to change your account. Please try again later.');
+			setErrorText('There was an error when attempting to change your password. Please try again later.');
 		}
 
 		setButtonLoading(false);

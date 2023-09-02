@@ -1,5 +1,6 @@
 import {Client} from 'pg';
 
+import type {ProfilePictureType} from './../constants';
 import type {RawSession, RawUser} from './types.d';
 import type {ClientConfig, QueryResult, QueryResultRow} from 'pg';
 
@@ -77,20 +78,20 @@ class Database {
 		await this.client.end();
 	}
 
-	public async fieldExists(table: string, field: string, value: string, extraQueries?: {
-		name: string,
+	public async entryExists(table: string, ...whereQuery: {
+		field: string,
 		value: string,
-		negate: boolean,
+		negate?: boolean,
 	}[]): Promise<boolean> {
-		let parameterIndex = 2;
-		const parameters = [value];
-		const extraQuerySql = extraQueries?.map((query) => {
+		let parameterIndex = 1;
+		const parameters: string[] = [];
+		const where = whereQuery.map((query) => {
 			parameters.push(query.value);
-			return `AND ${query.name} ${query.negate ? '!' : ''}= $${parameterIndex++}`;
-		}).join('') || '';
+			return `${query.field} ${query.negate ? '!' : ''}= $${parameterIndex++}`;
+		}).join(' AND ');
 
 		const {rows} = await this.query<{exists: boolean}>(
-			`SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${field} = $1 ${extraQuerySql}) AS exists`,
+			`SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${where}) AS exists`,
 			parameters,
 		);
 
@@ -127,7 +128,7 @@ class Database {
 		);
 	}
 
-	public async getUser(userId: string): Promise<RawUser> {
+	public async getUser(userId: string): Promise<RawUser | undefined> {
 		const {rows} = await this.query<RawUser>(
 			'SELECT id, username, email, profile_picture, created, last_updated FROM users WHERE id = $1',
 			[userId],
@@ -136,8 +137,8 @@ class Database {
 		return rows[0];
 	}
 
-	public async getUserId(email: string): Promise<string | null> {
-		const {rows} = await this.query<{id: string | null}>(
+	public async getUserId(email: string): Promise<string | undefined> {
+		const {rows} = await this.query<{id: string}>(
 			`SELECT id FROM users WHERE email = $1`,
 			[email],
 		);
@@ -145,13 +146,13 @@ class Database {
 		return rows[0]?.id;
 	}
 
-	public async getUserPassword(userId: string): Promise<string | null> {
-		const {rows} = await this.query<{password: string | null}>(
+	public async getUserPassword(userId: string): Promise<string | undefined> {
+		const {rows} = await this.query<{password: string}>(
 			`SELECT password FROM users WHERE id = $1`,
 			[userId],
 		);
 
-		return rows[0].password;
+		return rows[0]?.password;
 	}
 
 	public async createUser(userId: string, username: string, email: string, password: string) {
@@ -172,6 +173,13 @@ class Database {
 		await this.query(
 			'UPDATE users SET password = $1 WHERE id = $2',
 			[password, userId],
+		);
+	}
+
+	public async changeProfilePicture(userId: string, profilePicture: ProfilePictureType) {
+		await this.query(
+			'UPDATE users SET profile_picture = $1 WHERE id = $2',
+			[profilePicture, userId],
 		);
 	}
 }
