@@ -12,7 +12,7 @@
 	"settings": {
 		"import/resolver": {
 			"node": {
-				"paths": ["src"],
+				"paths": ["src", "emails", "dev"],
 				"extensions": [".js", ".jsx", ".ts", ".tsx"]
 			}
 		}

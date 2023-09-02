@@ -1,10 +1,11 @@
 {
-	"name": "account",
+	"name": "accounts",
 	"version": "1.0.0",
 	"main": "index.js",
 	"license": "MIT",
 	"dependencies": {
 		"@heroicons/react": "^2.0.18",
+		"@react-email/components": "^0.0.7",
 		"argon2": "^0.31.0",
 		"autoprefixer": "^10.4.14",
 		"next": "^13.4.13",
@@ -12,6 +13,7 @@
 		"postcss": "^8.4.27",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-email": "^1.9.4",
 		"sharp": "^0.32.4",
 		"tailwindcss": "^3.3.3",
 		"typescript": "^5.0.4",
@@ -37,9 +39,10 @@
 		"dev-db": "docker compose -f compose.dev.yml up --build",
 		"dev-clear-db": "docker compose -f compose.dev.yml down -v",
 		"dev-next": "next dev",
+		"email": "bash ./dev/prepare-email && email dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint --ext ts --ext tsx --max-warnings 0 src dev",
+		"lint": "eslint --ext ts --ext tsx --max-warnings 0 src dev emails",
 		"tool": "bash ./dev/run-tool"
 	},
 	"engines": {

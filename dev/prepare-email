@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd "$( dirname "${BASH_SOURCE[0]}" )/.."
+
+mkdir -p .react-email
+cp .env .react-email/.env

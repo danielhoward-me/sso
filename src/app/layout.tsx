@@ -4,7 +4,7 @@ import Navbar, {shouldBeDark} from './navbar';
 import type {Metadata} from 'next';
 
 export const metadata: Metadata = {
-	title: 'Account',
+	title: 'Accounts',
 	description: 'Accounts system for danielhoward.me',
 	icons: {
 		icon: [
