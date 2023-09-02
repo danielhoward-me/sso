@@ -1,7 +1,9 @@
 import sanitiseProps from './../utils/sanitise-props';
 import LoadingSpinner from './loading-spinner';
 
-interface ButtonProps extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
+import type {DetailedHTMLProps, ButtonHTMLAttributes} from 'react';
+
+interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
 	loading?: boolean;
 	buttonStyle?: 'primary' | 'danger';
 }

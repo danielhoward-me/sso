@@ -1,4 +1,6 @@
-export default function MiddleIsland({fullWidth, children}: {fullWidth?: boolean, children: React.ReactNode}) {
+import type {ReactNode} from 'react';
+
+export default function MiddleIsland({fullWidth, children}: {fullWidth?: boolean, children: ReactNode}) {
 	return (
 		<div className="flex justify-center items-center min-h-[var(--real-page-height)]">
 			<div className={`text-center m-4 ${fullWidth && 'w-[80rem]'}`}>

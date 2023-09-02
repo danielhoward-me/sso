@@ -11,6 +11,7 @@ import Image from 'next/image';
 import {useState} from 'react';
 
 import type {ColourScheme} from './../constants';
+import type {ReactNode} from 'react';
 
 interface LinkProps {
 	name: string;
@@ -42,7 +43,7 @@ function NavbarLink(props: LinkProps) {
 
 interface ButtonProps {
 	onClick: () => void;
-	children: React.ReactNode;
+	children: ReactNode;
 	hide?: 'mobile' | 'desktop';
 }
 
@@ -56,7 +57,7 @@ export function NavbarButton(props: ButtonProps) {
 	);
 }
 
-function NavbarElement({children, indent}: {children: React.ReactNode, indent?: boolean}) {
+function NavbarElement({children, indent}: {children: ReactNode, indent?: boolean}) {
 	return (
 		<div className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 select-none ${indent ? 'ml-6' : ''}`}>
 			{children}

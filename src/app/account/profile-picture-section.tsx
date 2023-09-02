@@ -2,6 +2,7 @@ import {ProfilePictureType} from './../../constants';
 import {profilePictureValidationData} from './../../inputs';
 import constructProfilePicture from './../../server/construct-profile-picture';
 import Button from './../components/button';
+import Link from './../components/link';
 import Modal from './../components/modal';
 import {changeProfilePictureUrl} from './../navbar-elements';
 import makeApiRequest from './../utils/make-api-request';
@@ -31,7 +32,10 @@ export default function ProfilePictureSection({type, emailHash: initEmailHash}: 
 
 	const [profilePictureUrl, setProfilePictureUrl] = useState(constructProfilePicture(type, emailHash));
 
+	const [hasCustomProfilePictrue, setHasCustomProfilePictrue] = useState(true);
+
 	updateProfilePicutre = (newEmailHash?: string) => {
+		setHasCustomProfilePictrue(true);
 		if (newEmailHash && emailHash !== newEmailHash) setEmailHash(newEmailHash);
 		const url = constructProfilePicture(profilePictureSelected, newEmailHash || emailHash);
 		setProfilePictureUrl(url);
@@ -99,23 +103,41 @@ export default function ProfilePictureSection({type, emailHash: initEmailHash}: 
 						{Object.values(ProfilePictureType).map((profilePictureType) => (
 							<div
 								key={profilePictureType}
-								onClick={() => setProfilePictureSelected(profilePictureType)}
-								className={`${profilePictureSelected === profilePictureType ? 'bg-blue-100 shadow-blue-100 shadow-lg dark:bg-slate-600 dark:shadow-slate-800' : 'border-gray-300 dark:border-gray-500 bg-gray-50 dark:bg-gray-700'} m-1 border dark:border-gray-500 shadow rounded p-4 hover:scale-110 cursor-pointer transition-transform hover:z-10 select-none`}
+								onClick={() => !(profilePictureType === ProfilePictureType.Custom && !hasCustomProfilePictrue) && setProfilePictureSelected(profilePictureType)}
+								className={`${profilePictureSelected === profilePictureType ? 'bg-blue-100 shadow-blue-100 shadow-lg dark:bg-slate-600 dark:shadow-slate-800' : 'border-gray-300 dark:border-gray-500 bg-gray-50 dark:bg-gray-700'} ${profilePictureType === ProfilePictureType.Custom && !hasCustomProfilePictrue ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-110'} m-1 border dark:border-gray-500 shadow rounded p-4 transition-transform hover:z-10 select-none`}
 							>
-								<Image
-									src={`${constructProfilePicture(profilePictureType, emailHash)}&s=150`}
-									alt={`Profile Picture Style`}
-									width={150}
-									height={150}
-									className="rounded-full"
-									draggable={false}
-								/>
+								{profilePictureType === ProfilePictureType.Custom && !hasCustomProfilePictrue ? (
+									<div className="w-[150px] h-[150px] text-center mx-auto">
+										<p className="text-sm">
+											You haven't uploaded a custom profile picture.
+											To upload one, you need to create an account
+											on <Link href="https://gravatar.com/" target="_blank">gravatar</Link> using
+											the same email that you have used here
+										</p>
+										<Link href="https://en.gravatar.com/support/activating-your-account/" target="_blank">Learn More</Link>
+									</div>
+								) : (
+									<Image
+										src={`${constructProfilePicture(profilePictureType, emailHash)}&${profilePictureType === ProfilePictureType.Custom ? 'd=404&' : ''}s=150`}
+										alt={`Profile Picture Style`}
+										width={150}
+										height={150}
+										className="rounded-full mx-auto"
+										draggable={false}
+										onError={() => setHasCustomProfilePictrue(false)}
+									/>
+								)}
 								<p className="text-center mt-4">
-									{profilePictureType[0].toUpperCase() + profilePictureType.substring(1)}
+									<b>{profilePictureType[0].toUpperCase() + profilePictureType.substring(1)}</b>
 								</p>
 							</div>
 						))}
 					</div>
+					<p className="text-center my-4">
+						These profile pictures are generated based on your email
+						by <Link href="https://gravatar.com/" target="_blank">gravatar</Link>,
+						this means they will change if you change your email
+					</p>
 					{errorText && <p className="text-red-500 text-center my-4">{errorText}</p>}
 					<div className="flex justify-center gap-1 mx-auto">
 						<Button onClick={save} loading={buttonLoading}>

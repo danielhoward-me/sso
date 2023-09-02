@@ -5,11 +5,13 @@ import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
 import EyeSlashIcon from '@heroicons/react/24/solid/EyeSlashIcon';
 import {useState} from 'react';
 
-type TextInputProps = {
+import type {DetailedHTMLProps, InputHTMLAttributes} from 'react';
+
+interface TextInputProps extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
 	label: string;
 	error?: string;
 	labelLink?: InputLabelLink;
-} & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+}
 interface InputLabelLink {
 	href: string;
 	text: string;
