@@ -1,6 +1,6 @@
 import {getSession} from './../../server/session';
 import Link from './../components/link';
-import MiddleIsland from '../components/middle-island';
+import MiddleIsland from './../components/middle-island';
 import {getRedirect, getRedirectQueryForPage} from './../utils/get-redirect';
 import LoginForm from './form';
 
