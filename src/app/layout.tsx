@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
 	children,
 }: {
-	children: JSX.Element
+	children: JSX.Element,
 }) {
 	return (
 		<html lang="en" className={shouldBeDark() ? 'dark' : ''}>

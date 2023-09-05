@@ -16,7 +16,7 @@ export default class User {
 	email: string;
 	profilePicture: ProfilePictureType;
 	created: Date;
-	last_updated: Date;
+	lastUpdated: Date;
 	emailHash: string;
 
 	constructor(id: string) {
@@ -34,7 +34,7 @@ export default class User {
 		this.email = rawUser.email;
 		this.profilePicture = rawUser.profile_picture;
 		this.created = new Date(rawUser.created);
-		this.last_updated = new Date(rawUser.last_updated);
+		this.lastUpdated = new Date(rawUser.last_updated);
 
 		this.emailHash = createHash('md5').update(this.email).digest('hex');
 
