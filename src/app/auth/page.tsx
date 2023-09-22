@@ -58,7 +58,7 @@ export default function AuthPage({searchParams}: SearchParamsProps) {
 					Clicking authorise will only allow <b>{target.name}</b> to have access to your name, email and profile picture
 					(it will <b>not</b> be able to acccess your password)
 				</p>
-				<Buttons/>
+				<Buttons target={targetValue} devPort={filteredSearchParams.devport}/>
 			</div>
 		</MiddleIsland>
 	);

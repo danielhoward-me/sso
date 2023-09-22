@@ -182,6 +182,13 @@ class Database {
 			[profilePicture, userId],
 		);
 	}
+
+	public async createAccessToken(token: string, userId: string, target: string, expiresSeconds: number) {
+		await this.query(
+			`INSERT INTO access_tokens (token, user_id, target, expires) VALUES ($1, $2, $3, NOW() + INTERVAL '${expiresSeconds} seconds')`,
+			[token, userId, target],
+		);
+	}
 }
 
 const db = new Database();
