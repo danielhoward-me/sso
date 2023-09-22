@@ -11,7 +11,7 @@ import {useState, useRef} from 'react';
 import type {BasicApiResponse} from './../types.d';
 import type {FormEvent} from 'react';
 
-export default function LoginForm({redirect}: {redirect: string}) {
+export default function LoginForm({redirect, navbarHidden}: {redirect: string, navbarHidden: boolean}) {
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');
 	const [errorText, setErrorText] = useState('');
@@ -65,7 +65,7 @@ export default function LoginForm({redirect}: {redirect: string}) {
 			/>
 			<TextInput
 				label="Password"
-				labelLink={{href: `/password-reset`, text: 'Forgot password?'}}
+				labelLink={{href: `/password-reset${navbarHidden ? `?hidenavbar` : ''}`, text: 'Forgot password?'}}
 				id="password"
 				name="password"
 				placeholder="Password"

@@ -34,3 +34,7 @@ export enum ProfilePictureType {
 	Retro = 'retro',
 	Robohash = 'robohash',
 }
+
+export const hideNavbarPages: string[] = [
+	'/auth',
+];
