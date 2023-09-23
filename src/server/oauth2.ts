@@ -31,6 +31,12 @@ export async function getAccessTokenData(token: string): Promise<AccessTokenData
 	const tokenData = await db.getAccessTokenData(token);
 	if (!tokenData) return null;
 
+	const expires = new Date(tokenData.expires);
+	if (expires.getTime() < Date.now()) {
+		db.deleteAccessToken(token);
+		return null;
+	}
+
 	const user = new User(tokenData.user_id);
 	await user.waitForLoad();
 

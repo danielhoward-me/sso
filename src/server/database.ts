@@ -214,6 +214,13 @@ class Database {
 			[token],
 		);
 	}
+
+	public async deleteAccessToken(token: string) {
+		await this.query(
+			`DELETE FROM access_tokens WHERE token = $1`,
+			[token],
+		);
+	}
 }
 
 const db = new Database();

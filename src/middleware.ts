@@ -1,4 +1,4 @@
-import {hideNavbarPages} from './constants';
+import {hideNavbarPaths} from './constants';
 import {loadSession} from './server/session/sessionApi';
 import {validateApiRequest} from './validate-api-request';
 
@@ -10,7 +10,7 @@ export async function middleware(req: NextRequest) {
 	const res = await loadSession(req) || await validateApiRequest(req);
 	if (res) return res;
 
-	const hideNavbar = hideNavbarPages.includes(req.nextUrl.pathname) || (
+	const hideNavbar = hideNavbarPaths.includes(req.nextUrl.pathname) || (
 		req.nextUrl.searchParams.has('hidenavbar') && (
 			([
 				'/login', '/signup',

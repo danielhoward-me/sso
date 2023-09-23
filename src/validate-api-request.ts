@@ -20,7 +20,7 @@ export async function validateApiRequest(req: NextRequest): Promise<NextResponse
 	}
 
 	if (requiresBearerToken) {
-		const authentication = req.headers.get('authorization') ?? '';
+		const authentication = req.headers.get('Authorization') ?? '';
 		const bearerToken = authentication.replace(/^Bearer /, '');
 
 		if (bearerToken !== requiresBearerToken()) return NextResponse.json({error: 'Unauthorised'}, {status: 401});

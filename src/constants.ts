@@ -37,6 +37,10 @@ export enum ProfilePictureType {
 	Robohash = 'robohash',
 }
 
-export const hideNavbarPages: string[] = [
+export const hideNavbarPaths: string[] = [
 	'/auth',
+];
+export const noSessionPaths: string[] = [
+	'/api/session',
+	'/api/oauth2/account',
 ];

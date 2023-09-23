@@ -1,5 +1,5 @@
 import {setSessionHasUser} from './';
-import {CookieName, SESSION_COOKIE_MAX_AGE} from './../../constants';
+import {CookieName, SESSION_COOKIE_MAX_AGE, noSessionPaths} from './../../constants';
 
 import {NextResponse} from 'next/server';
 
@@ -9,7 +9,7 @@ import type {NextRequest} from 'next/server';
 
 // Called by middleware to make a request to the session API
 export async function loadSession(req: NextRequest): Promise<NextResponse | void> {
-	if (req.nextUrl.pathname === '/api/session') return;
+	if (noSessionPaths.includes(req.nextUrl.pathname)) return;
 
 	const ip = req.ip ?? '::1';
 	const sessionId = req.cookies.get(CookieName.SESSION)?.value;
