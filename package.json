@@ -43,7 +43,7 @@
 		"email-dev": "email dev",
 		"build": "next build",
 		"start": "next start -p 3000",
-		"dev-start": "yarn build && concurrently -k -c auto -n DB,NEXT \"yarn dev-db\" \"yarn start\"",
+		"dev-start": "concurrently -k -c auto -n DB,NEXT \"yarn dev-db\" \"yarn start\"",
 		"lint": "eslint --ext ts --ext tsx --max-warnings 0 src dev emails",
 		"tool": "bash ./dev/run-tool"
 	},
