@@ -16,7 +16,7 @@ export default function Buttons({target, devPort}: {target: string, devPort: str
 		setErrorText('');
 
 		try {
-			const {redirect} = await makeApiRequest<AuthApiResponse>('auth', {target, devPort});
+			const {redirect} = await makeApiRequest<AuthApiResponse>('oauth2/auth', {target, devPort});
 			window.location.href = redirect;
 		} catch (err) {
 			console.error(err);

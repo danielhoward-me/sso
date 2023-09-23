@@ -33,3 +33,4 @@ CREATE TABLE access_tokens (
 	created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	expires TIMESTAMP NOT NULL
 );
+CREATE INDEX idx_access_tokens_user_id_target ON access_tokens (user_id, target);

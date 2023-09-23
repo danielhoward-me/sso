@@ -1,10 +1,10 @@
-import authTargets from './../../../auth-targets';
-import getAccessToken from './../../../server/oauth2';
-import {getAuthenticatedSession} from './../../../server/session';
+import authTargets from './../../../../auth-targets';
+import {makeAccessToken} from './../../../../server/oauth2';
+import {getAuthenticatedSession} from './../../../../server/session';
 
 import {NextResponse} from 'next/server';
 
-import type {AuthApiResponse} from './../../types.d';
+import type {AuthApiResponse} from './../../../types.d';
 import type {NextRequest} from 'next/server';
 
 interface RequestBody {
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 	const target = authTargets[data.target];
 	switch (target.tokenType) {
 	case 'token': {
-		const params = await getAccessToken(data.target, session.user);
+		const params = await makeAccessToken(data.target, session.user);
 		urlSuffix = `#${params}`;
 	}
 	}
