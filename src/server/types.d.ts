@@ -19,6 +19,17 @@ export interface RawUser {
 	last_updated: string;
 }
 
+export interface RawAccessTokenData {
+	user_id: string;
+	target: string;
+	expires: string;
+}
+export interface AccessTokenData {
+	user: User;
+	target: string;
+	expires: Date;
+}
+
 export interface SessionApiRequestBody {
 	sessionId: string | undefined;
 	ip: string;

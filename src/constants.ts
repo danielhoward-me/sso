@@ -5,6 +5,8 @@ export enum CookieName {
 }
 export const SESSION_COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
+export const ACCESS_TOKEN_EXPIRES_SECONDS = 60 * 60 * 24 * 10; // 10 days
+
 export enum ColourScheme {
 	BROWSER,
 	LIGHT,
@@ -34,3 +36,11 @@ export enum ProfilePictureType {
 	Retro = 'retro',
 	Robohash = 'robohash',
 }
+
+export const hideNavbarPaths: string[] = [
+	'/auth',
+];
+export const noSessionPaths: string[] = [
+	'/api/session',
+	'/api/oauth2/account',
+];

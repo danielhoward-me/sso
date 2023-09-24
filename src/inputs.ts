@@ -19,6 +19,24 @@ export const sessionApiValidationData: ValidationData = {
 		},
 	},
 };
+export const authApiValidationData: ValidationData = {
+	inputs: {
+		target: {
+			type: 'string',
+			required: true,
+			patterns: [
+				{
+					pattern: /chaos/,
+					message: 'should be a valid target',
+				},
+			],
+		},
+		devPort: {
+			type: 'string',
+			required: false,
+		},
+	},
+};
 
 export const loginPageValidationData: ValidationData = {
 	inputs: {
@@ -129,6 +147,10 @@ export const apiValidationDataMap: {[key: string]: ValidationDataMapEntry} = {
 	'session': {
 		validationData: sessionApiValidationData,
 		requiresBearerToken: () => process.env.SESSION_API_KEY || '',
+	},
+	'auth': {
+		validationData: authApiValidationData,
+		requiresAccount: true,
 	},
 	'login': {
 		validationData: loginPageValidationData,

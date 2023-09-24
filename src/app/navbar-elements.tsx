@@ -110,7 +110,7 @@ export function NavbarContent({
 		},
 		{
 			name: 'GitHub',
-			href: 'https://github.com/danielhoward-me/account',
+			href: 'https://github.com/danielhoward-me/sso',
 			external: true,
 		},
 	];

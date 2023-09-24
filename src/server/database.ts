@@ -1,7 +1,7 @@
 import {Client} from 'pg';
 
 import type {ProfilePictureType} from './../constants';
-import type {RawSession, RawUser} from './types.d';
+import type {RawSession, RawUser, RawAccessTokenData} from './types.d';
 import type {ClientConfig, QueryResult, QueryResultRow} from 'pg';
 
 class Database {
@@ -180,6 +180,45 @@ class Database {
 		await this.query(
 			'UPDATE users SET profile_picture = $1 WHERE id = $2',
 			[profilePicture, userId],
+		);
+	}
+
+	public async createAccessToken(token: string, userId: string, target: string, expiresSeconds: number) {
+		await this.query(
+			`INSERT INTO access_tokens (token, user_id, target, expires) VALUES ($1, $2, $3, NOW() + INTERVAL '${expiresSeconds} SECONDS')`,
+			[token, userId, target],
+		);
+	}
+
+	public async getAccessTokenData(token: string): Promise<RawAccessTokenData | undefined> {
+		const {rows} = await this.query<RawAccessTokenData>(
+			'SELECT user_id, target, expires FROM access_tokens WHERE token = $1',
+			[token],
+		);
+
+		return rows[0];
+	}
+
+	public async getAccessToken(userId: string, target: string): Promise<string | undefined> {
+		const {rows} = await this.query<{token: string}>(
+			'SELECT token FROM access_tokens WHERE user_id = $1 AND target = $2',
+			[userId, target],
+		);
+
+		return rows[0]?.token;
+	}
+
+	public async updateAccessTokenExpiry(token: string, expiresSeconds: number) {
+		await this.query(
+			`UPDATE access_tokens SET expires = NOW() + INTERVAL '${expiresSeconds} SECONDS' WHERE token = $1`,
+			[token],
+		);
+	}
+
+	public async deleteAccessToken(token: string) {
+		await this.query(
+			`DELETE FROM access_tokens WHERE token = $1`,
+			[token],
 		);
 	}
 }

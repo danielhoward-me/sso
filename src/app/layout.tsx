@@ -1,5 +1,8 @@
 import './../styles/tailwind.css';
+
 import Navbar, {shouldBeDark} from './navbar';
+
+import {headers} from 'next/headers';
 
 import type {Metadata} from 'next';
 
@@ -26,12 +29,17 @@ export default async function RootLayout({
 }: {
 	children: JSX.Element,
 }) {
+	const hideNavbar = headers().get('x-hide-navbar') === '1';
+
 	return (
 		<html lang="en" className={shouldBeDark() ? 'dark' : ''}>
 			<body className="dark:bg-gray-800 dark:bg-opacity-95 dark:text-white bg-gray-100">
 				<div id="modal"/>
-				<Navbar/>
-				<main className="translate-y-16">
+				{!hideNavbar && <Navbar/>}
+				<main
+					style={{'--real-page-height': `calc(100vh ${hideNavbar ? '' : '- 4rem'})`} as React.CSSProperties}
+					className={hideNavbar ? '' : 'translate-y-16'}
+				>
 					{children}
 				</main>
 			</body>

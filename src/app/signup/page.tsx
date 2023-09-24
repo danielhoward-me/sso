@@ -1,6 +1,7 @@
 import {getSession} from './../../server/session';
+import Link from './../components/link';
 import MiddleIsland from './../components/middle-island';
-import {getRedirect} from './../utils/get-redirect';
+import {getRedirect, getRedirectQueryForPage} from './../utils/get-redirect';
 import SignupForm from './form';
 
 import {redirect} from 'next/navigation';
@@ -26,6 +27,13 @@ export default function SignupPage({searchParams}: SearchParamsProps) {
 		<MiddleIsland>
 			<h1 className="text-6xl font-bold pb-2">Sign up for Your Account</h1>
 			<SignupForm redirect={redirectPath}/>
+			<div className="block mt-5 leading-snug">
+				Already have an account?
+				<br/>
+				<Link href={`/login${getRedirectQueryForPage(redirectPath)}${searchParams.hidenavbar === undefined ? '' : '&hidenavbar'}`}>
+					Login here
+				</Link>
+			</div>
 		</MiddleIsland>
 	);
 }

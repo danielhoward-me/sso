@@ -2,5 +2,9 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/.."
 
-mkdir -p .react-email
+if [ ! -d ".react-email" ]; then
+	echo "Please create and setup the .react-email directory with yarn email-dev before running this script."
+	exit 1
+fi
+
 cp .env .react-email/.env

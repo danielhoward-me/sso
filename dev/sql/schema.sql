@@ -23,5 +23,14 @@ CREATE TABLE sessions (
 	id UUID NOT NULL PRIMARY KEY,
 	ip INET NOT NULL,
 	expires TIMESTAMP NOT NULL,
-	user_id UUID REFERENCES users(id)
+	user_id UUID REFERENCES users (id)
 );
+
+CREATE TABLE access_tokens (
+	token UUID NOT NULL PRIMARY KEY,
+	user_id UUID REFERENCES users (id),
+	target TEXT NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	expires TIMESTAMP NOT NULL
+);
+CREATE INDEX idx_access_tokens_user_id_target ON access_tokens (user_id, target);

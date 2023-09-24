@@ -23,14 +23,16 @@ export default function LoginPage({searchParams}: SearchParamsProps) {
 		redirect(redirectPath);
 	}
 
+	const navbarHidden = searchParams.hidenavbar !== undefined;
+
 	return (
 		<MiddleIsland>
 			<h1 className="text-6xl font-bold pb-2">Log in to Your Account</h1>
-			<LoginForm redirect={redirectPath}/>
+			<LoginForm redirect={redirectPath} navbarHidden={navbarHidden}/>
 			<div className="block mt-5 leading-snug">
 				Don't have an account?
 				<br/>
-				<Link href={`/signup${getRedirectQueryForPage(redirectPath)}`}>
+				<Link href={`/signup${getRedirectQueryForPage(redirectPath)}${navbarHidden ? '&hidenavbar' : ''}`}>
 					Create one here
 				</Link>
 			</div>
