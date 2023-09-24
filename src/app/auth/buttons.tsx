@@ -26,7 +26,11 @@ export default function Buttons({target, devPort}: {target: string, devPort: str
 		setButtonLoading(false);
 	}
 	function cancel() {
-		window.close();
+		if (window.opener) {
+			window.close();
+		} else {
+			window.history.go(-1);
+		}
 	}
 
 	return (
