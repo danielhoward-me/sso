@@ -15,13 +15,15 @@ import {
 
 const assetsBase = process.env.EMAIL_ASSETS_BASE || '';
 
-interface Props {
+export interface Props {
 	username: string;
 	expiryTime: number;
 	resetPasswordLink: string;
 }
 
-export default function ConfirmEmail({
+export const subject = 'Reset your password';
+
+export default function ResetPassword({
 	username = 'Daniel',
 	expiryTime = 10,
 	resetPasswordLink = 'https://sso.danielhoward.me',
@@ -29,7 +31,7 @@ export default function ConfirmEmail({
 	return (
 		<Html>
 			<Head/>
-			<Preview>Reset your password</Preview>
+			<Preview>{subject}</Preview>
 			<Tailwind>
 				<Body className="bg-white my-auto mx-auto font-sans">
 					<Container className="border border-solid border-gray-200 rounded m-4 p-6 mx-auto">

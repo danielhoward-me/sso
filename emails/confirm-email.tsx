@@ -13,11 +13,13 @@ import {
 
 const assetsBase = process.env.EMAIL_ASSETS_BASE || '';
 
-interface Props {
+export interface Props {
 	username: string;
 	expiryTime: number;
 	confirmCode: string;
 }
+
+export const subject = 'Confirm your email address';
 
 export default function ConfirmEmail({
 	username = 'Daniel',
@@ -27,7 +29,7 @@ export default function ConfirmEmail({
 	return (
 		<Html>
 			<Head/>
-			<Preview>Confirm your email address</Preview>
+			<Preview>{subject}</Preview>
 			<Tailwind>
 				<Body className="bg-white my-auto mx-auto font-sans">
 					<Container className="border border-solid border-gray-200 rounded m-4 p-6 mx-auto">

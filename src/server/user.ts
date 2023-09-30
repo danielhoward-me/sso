@@ -1,5 +1,7 @@
+import {USER_AUTH_CODE_EXPIRES_MINUTES} from './../constants';
 import constructProfilePicture from './construct-profile-picture';
 import db from './database';
+import email, {EmailTemplate} from './email';
 
 import argon2 from 'argon2';
 import {createHash} from 'crypto';
@@ -18,6 +20,8 @@ export default class User {
 	created: Date;
 	lastUpdated: Date;
 	emailHash: string;
+	authCode: string;
+	authCodeExpires: Date;
 
 	constructor(id: string) {
 		this.id = id;
@@ -35,6 +39,8 @@ export default class User {
 		this.profilePicture = rawUser.profile_picture;
 		this.created = new Date(rawUser.created);
 		this.lastUpdated = new Date(rawUser.last_updated);
+		this.authCode = rawUser.auth_code;
+		this.authCodeExpires = new Date(rawUser.auth_code_expires);
 
 		this.emailHash = createHash('md5').update(this.email).digest('hex');
 
@@ -103,15 +109,40 @@ export default class User {
 		return (await user.isPasswordCorrect(password)) ? user : null;
 	}
 
-	public static async create(username: string, email: string, password: string): Promise<User> {
+	public static async create(username: string, emailValue: string, password: string): Promise<User> {
 		let id = '';
 		while (id === '' || await User.idExists(id)) {
 			id = uuid();
 		}
 
 		const hashedPassword = await argon2.hash(password);
-		await db.createUser(id, username, email, hashedPassword);
+		const authCode = User.makeAuthCode();
+
+		await db.createUser(id, username, emailValue, hashedPassword, authCode, USER_AUTH_CODE_EXPIRES_MINUTES * 60);
+
+		email.sendTemplate(`${username} <${emailValue}>`, EmailTemplate.ConfirmEmail, {
+			username,
+			expiryTime: USER_AUTH_CODE_EXPIRES_MINUTES,
+			confirmCode: authCode,
+		});
 
 		return new User(id);
+	}
+
+	private static makeAuthCode(): string {
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+		let out = '';
+
+		for (let i = 0; i < 7; i++) {
+			if (i === 3) {
+				out += '-';
+				continue;
+			}
+
+			const randCharacter = Math.floor(Math.random() * characters.length);
+			out += characters[randCharacter];
+		}
+
+		return out;
 	}
 }

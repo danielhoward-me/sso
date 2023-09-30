@@ -7,6 +7,8 @@ export const SESSION_COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
 export const ACCESS_TOKEN_EXPIRES_SECONDS = 60 * 60 * 24 * 10; // 10 days
 
+export const USER_AUTH_CODE_EXPIRES_MINUTES = 10;
+
 export enum ColourScheme {
 	BROWSER,
 	LIGHT,

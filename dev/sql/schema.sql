@@ -15,7 +15,9 @@ CREATE TABLE users (
 	email VARCHAR(256) NOT NULL UNIQUE,
 	profile_picture profile_picture NOT NULL DEFAULT 'wavatar',
 	created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	auth_code VARCHAR(7),
+	auth_code_expires TIMESTAMP
 );
 CREATE TRIGGER update_user_last_updated BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_last_updated_column();
 

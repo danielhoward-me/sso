@@ -130,7 +130,7 @@ class Database {
 
 	public async getUser(userId: string): Promise<RawUser | undefined> {
 		const {rows} = await this.query<RawUser>(
-			'SELECT id, username, email, profile_picture, created, last_updated FROM users WHERE id = $1',
+			'SELECT id, username, email, profile_picture, created, last_updated, auth_code, auth_code_expires FROM users WHERE id = $1',
 			[userId],
 		);
 
@@ -155,10 +155,10 @@ class Database {
 		return rows[0]?.password;
 	}
 
-	public async createUser(userId: string, username: string, email: string, password: string) {
+	public async createUser(userId: string, username: string, email: string, password: string, authCode: string, authCodeExpires: number) {
 		await this.query(
-			'INSERT INTO users (id, username, email, password) VALUES ($1, $2, $3, $4)',
-			[userId, username, email, password],
+			`INSERT INTO users (id, username, email, password, auth_code, auth_code_expires) VALUES ($1, $2, $3, $4, $5, NOW() + INTERVAL '${authCodeExpires} SECONDS')`,
+			[userId, username, email, password, authCode],
 		);
 	}
 

@@ -4,17 +4,21 @@ export interface SearchParamsProps {
 	};
 }
 
-export type BasicApiResponse<T = object> = {
-	successful: true;
-} | (
+export type BasicApiResponse<S = object, U = object> = (
+	{
+		successful: true;
+	} & S
+) | (
 	{
 		successful: false;
-	} & T
+	} & U
 );
 
 export type AccountDetailsApiResponse = BasicApiResponse<{
-	usernameExists?: boolean;
-	emailExists?: boolean;
+	userId: string;
+}, {
+	usernameExists: boolean;
+	emailExists: boolean;
 }>;
 
 export type AuthApiResponse = {

@@ -17,6 +17,8 @@ export interface RawUser {
 	profile_picture: ProfilePictureType;
 	created: string;
 	last_updated: string;
+	auth_code: string;
+	auth_code_expires: string;
 }
 
 export interface RawAccessTokenData {

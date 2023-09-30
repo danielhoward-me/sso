@@ -1,4 +1,3 @@
-import {saveSession} from './../../../server/session/session';
 import User from './../../../server/user';
 
 import {NextResponse} from 'next/server';
@@ -15,27 +14,22 @@ interface RequestBody {
 export async function POST(req: NextRequest) {
 	const data = await req.json() as RequestBody;
 
-	let response: AccountDetailsApiResponse = {successful: true};
+	const usernameExists: boolean = await User.usernameExists(data.username);
+	const emailExists: boolean = await User.emailExists(data.email);
 
-	if (await User.usernameExists(data.username)) {
-		response = {
-			...response,
+	if (usernameExists || emailExists) {
+		return NextResponse.json<AccountDetailsApiResponse>({
 			successful: false,
-			usernameExists: true,
-		};
-	}
-	if (await User.emailExists(data.email)) {
-		response = {
-			...response,
-			successful: false,
-			emailExists: true,
-		};
+			usernameExists,
+			emailExists,
+		});
 	}
 
-	if (response.successful) {
-		const user = await User.create(data.username, data.email, data.password);
-		saveSession(user.id);
-	}
+	const user = await User.create(data.username, data.email, data.password);
+	await user.waitForLoad();
 
-	return NextResponse.json(response);
+	return NextResponse.json<AccountDetailsApiResponse>({
+		successful: true,
+		userId: user.id,
+	});
 }
