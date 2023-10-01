@@ -59,7 +59,7 @@ export default function ResetPassword({
 							If the button doesn't work, please click the following link: <Link href={resetPasswordLink}>{resetPasswordLink}</Link>
 						</Text>
 						<Text>
-							The Link will only be valid for the next {expiryTime} minutes
+							The link will only be valid for the next {expiryTime} minutes
 						</Text>
 						<Text className="text-gray-600 text-md">
 							If you didn't request this code, you can safely ignore this email

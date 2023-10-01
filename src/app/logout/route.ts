@@ -6,7 +6,7 @@ import {NextResponse} from 'next/server';
 import type {NextRequest} from 'next/server';
 
 export function GET(req: NextRequest) {
-	saveSession(null);
+	saveSession(null, null);
 	const referer = headers().get('Referer');
 	return NextResponse.redirect(referer || req.nextUrl.origin);
 }

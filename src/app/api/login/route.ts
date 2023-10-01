@@ -3,7 +3,7 @@ import User from './../../../server/user';
 
 import {NextResponse} from 'next/server';
 
-import type {BasicApiResponse} from './../../types.d';
+import type {LoginApiResponse} from './../../types.d';
 import type {NextRequest} from 'next/server';
 
 interface RequestBody {
@@ -14,7 +14,25 @@ interface RequestBody {
 export async function POST(req: NextRequest) {
 	const data = await req.json() as RequestBody;
 	const user = await User.get(data.email, data.password);
-	if (user) saveSession(user.id);
 
-	return NextResponse.json<BasicApiResponse>({successful: user !== null});
+	let response: LoginApiResponse = {
+		successful: true,
+	};
+
+	if (user && !user.authCode) {
+		saveSession(user.id);
+	} else if (user && user.authCode) {
+		saveSession(null, user.id);
+
+		response = {
+			successful: false,
+			requiresEmailAuth: true,
+		};
+	} else {
+		response = {
+			successful: false,
+		};
+	}
+
+	return NextResponse.json(response);
 }

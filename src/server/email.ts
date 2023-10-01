@@ -26,7 +26,7 @@ class Email {
 	constructor() {
 		console.log('Creating mail transporter');
 		this.createTransporter()
-			.then(() => console.log('Successfully create mail transporter'))
+			.then(() => console.log('Successfully created mail transporter'))
 			.catch((err) => console.error(`Failed to create transporter: ${err.message}`));
 	}
 

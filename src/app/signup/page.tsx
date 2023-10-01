@@ -18,12 +18,13 @@ export default function SignupPage({searchParams}: SearchParamsProps) {
 	const session = getSession();
 
 	const redirectPath = getRedirect(searchParams, '/signup');
+	const linkQuery = `${getRedirectQueryForPage(redirectPath)}${searchParams.hidenavbar === undefined ? '' : '&hidenavbar'}`;
 
 	if (session.user) {
 		redirect(redirectPath);
+	} else if (session.waitForAuthUser) {
+		redirect(`/confirm-email${linkQuery}`);
 	}
-
-	const linkQuery = `${getRedirectQueryForPage(redirectPath)}${searchParams.hidenavbar === undefined ? '' : '&hidenavbar'}`;
 
 	return (
 		<MiddleIsland>

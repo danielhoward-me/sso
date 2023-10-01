@@ -3,7 +3,7 @@ import Link from './link';
 
 import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
 import EyeSlashIcon from '@heroicons/react/24/solid/EyeSlashIcon';
-import {useState} from 'react';
+import {forwardRef, useState} from 'react';
 
 import type {DetailedHTMLProps, InputHTMLAttributes} from 'react';
 
@@ -11,18 +11,20 @@ interface TextInputProps extends DetailedHTMLProps<InputHTMLAttributes<HTMLInput
 	label?: string;
 	error?: string;
 	labelLink?: InputLabelLink;
+	singleCharInput?: boolean;
 }
 interface InputLabelLink {
 	href: string;
 	text: string;
 }
 
-export default function TextInput(props: TextInputProps) {
+const TextInput = forwardRef<HTMLInputElement, TextInputProps>((props: TextInputProps, ref) => {
 	const [passwordShowing, setPasswordShowing] = useState(false);
 
 	const inputProps = sanitiseProps(props, [
 		'label',
 		'labelLink',
+		'singleCharInput',
 	]);
 
 	return (
@@ -50,8 +52,9 @@ export default function TextInput(props: TextInputProps) {
 				)}
 				<input
 					{...inputProps}
-					className={`appearance-none shadow border-2 rounded w-full py-2 px-3 text-gray-700 ring-0 focus:outline-none focus:ring-2 mt-2 mb-1 ring-opacity-50 ${props.error ? 'ring-red-400 border-red-500' : 'ring-blue-500'} ${props.type === 'password' ? 'pr-11' : ''}`}
+					className={`appearance-none shadow border-2 rounded ${props.singleCharInput ? 'w-6 py-1 px-0 text-center' : 'w-full py-2 px-3'} text-gray-700 ring-0 focus:outline-none focus:ring-2 mt-2 mb-1 ring-opacity-50 ${props.error ? 'ring-red-400 border-red-500' : 'ring-blue-500'} ${props.type === 'password' ? 'pr-11' : ''}`}
 					type={props.type === 'password' ? (passwordShowing ? 'text' : 'password') : props.type}
+					ref={ref}
 				/>
 			</div>
 			{props.error && (
@@ -61,4 +64,5 @@ export default function TextInput(props: TextInputProps) {
 			)}
 		</div>
 	);
-}
+});
+export default TextInput;

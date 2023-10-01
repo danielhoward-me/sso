@@ -8,10 +8,10 @@ import runValidation from './../utils/run-validation';
 
 import {useState, useRef} from 'react';
 
-import type {BasicApiResponse} from './../types.d';
+import type {LoginApiResponse} from './../types.d';
 import type {FormEvent} from 'react';
 
-export default function LoginForm({redirect, navbarHidden}: {redirect: string, navbarHidden: boolean}) {
+export default function LoginForm({redirect, linkQuery}: {redirect: string, linkQuery: string}) {
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');
 	const [errorText, setErrorText] = useState('');
@@ -36,10 +36,13 @@ export default function LoginForm({redirect, navbarHidden}: {redirect: string, n
 		}
 
 		try {
-			const {successful} = await makeApiRequest<BasicApiResponse>('login', validData);
+			const res = await makeApiRequest<LoginApiResponse>('login', validData);
 
-			if (successful) {
+			if (res.successful) {
 				window.location.href = redirect;
+				return;
+			} else if (res.requiresEmailAuth) {
+				window.location.href = `/confirm-email${linkQuery}`;
 				return;
 			} else {
 				setErrorText('The email or password you entered is incorrect.');
@@ -65,7 +68,7 @@ export default function LoginForm({redirect, navbarHidden}: {redirect: string, n
 			/>
 			<TextInput
 				label="Password"
-				labelLink={{href: `/password-reset${navbarHidden ? `?hidenavbar` : ''}`, text: 'Forgot password?'}}
+				labelLink={{href: `/forgot-password${linkQuery}`, text: 'Forgot password?'}}
 				id="password"
 				name="password"
 				placeholder="Password"

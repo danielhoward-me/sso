@@ -10,6 +10,7 @@ const sessionCache: {[uuid: string]: Session} = {};
 const sessionHasUserCache: {[uuid: string]: boolean} = {};
 const defaultSession: Session = {
 	user: null,
+	waitForAuthUser: null,
 };
 
 export function setSession(uuid: string, session: Session) {

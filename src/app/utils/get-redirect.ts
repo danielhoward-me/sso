@@ -19,7 +19,7 @@ export function getRedirectQueryFromCurrentPage(): string {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	if (/\/(login|signup)/.test(pathname)) {
+	if (/\/(login|signup|confirm-email|forgot-password)/.test(pathname)) {
 		const currentRedirect = searchParams.get(REDIRECT_QUERY_PARAMETER_NAME);
 		return getRedirectQueryForPage(decodeURIComponent(currentRedirect || DEFAULT_POST_LOGIN_REDIRECT));
 	}

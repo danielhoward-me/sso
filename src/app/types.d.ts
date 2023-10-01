@@ -19,6 +19,10 @@ export type AccountDetailsApiResponse = BasicApiResponse<{
 	emailExists: boolean;
 }>;
 
+export type LoginApiResponse = BasicApiResponse<{
+	requiresEmailAuth?: boolean;
+}>;
+
 export type AuthApiResponse = {
 	redirect: string;
 };

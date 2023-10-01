@@ -100,7 +100,7 @@ class Database {
 
 	public async getSession(sessionId: string): Promise<RawSession | undefined> {
 		const {rows} = await this.query<RawSession>(
-			'SELECT id, ip, expires, user_id, wait_for_auth_user_id FROM sessions WHERE id = $1',
+			'SELECT id, ip, EXTRACT(EPOCH FROM expires) AS expires, user_id, wait_for_auth_user_id FROM sessions WHERE id = $1',
 			[sessionId],
 		);
 
@@ -122,7 +122,6 @@ class Database {
 	}
 
 	public async updateSession(sessionId: string, userId: string | null, waitForAuthUserId: string | null) {
-		console.log(userId, waitForAuthUserId);
 		await this.query(
 			'UPDATE sessions SET user_id = $1, wait_for_auth_user_id = $2 WHERE id = $3',
 			[userId, waitForAuthUserId, sessionId],
@@ -131,7 +130,7 @@ class Database {
 
 	public async getUser(userId: string): Promise<RawUser | undefined> {
 		const {rows} = await this.query<RawUser>(
-			'SELECT id, username, email, profile_picture, created, last_updated, auth_code, auth_code_expires FROM users WHERE id = $1',
+			'SELECT id, username, email, profile_picture, EXTRACT(EPOCH FROM created) AS created, EXTRACT(EPOCH FROM last_updated) AS last_updated, auth_code, EXTRACT(EPOCH FROM auth_code_expires) AS auth_code_expires FROM users WHERE id = $1',
 			[userId],
 		);
 
@@ -156,10 +155,10 @@ class Database {
 		return rows[0]?.password;
 	}
 
-	public async createUser(userId: string, username: string, email: string, password: string, authCode: string, authCodeExpires: number) {
+	public async createUser(userId: string, username: string, email: string, password: string) {
 		await this.query(
-			`INSERT INTO users (id, username, email, password, auth_code, auth_code_expires) VALUES ($1, $2, $3, $4, $5, NOW() + INTERVAL '${authCodeExpires} SECONDS')`,
-			[userId, username, email, password, authCode],
+			`INSERT INTO users (id, username, email, password) VALUES ($1, $2, $3, $4)`,
+			[userId, username, email, password],
 		);
 	}
 
@@ -184,6 +183,13 @@ class Database {
 		);
 	}
 
+	public async setUserAuthCode(userId: string, authCode: string, expiry: number) {
+		await this.query(
+			`UPDATE users SET auth_code = $1, auth_code_expires = NOW() + INTERVAL '${expiry} SECONDS' WHERE id = $2`,
+			[authCode, userId],
+		);
+	}
+
 	public async createAccessToken(token: string, userId: string, target: string, expiresSeconds: number) {
 		await this.query(
 			`INSERT INTO access_tokens (token, user_id, target, expires) VALUES ($1, $2, $3, NOW() + INTERVAL '${expiresSeconds} SECONDS')`,
@@ -193,7 +199,7 @@ class Database {
 
 	public async getAccessTokenData(token: string): Promise<RawAccessTokenData | undefined> {
 		const {rows} = await this.query<RawAccessTokenData>(
-			'SELECT user_id, target, expires FROM access_tokens WHERE token = $1',
+			'SELECT user_id, target, EXTRACT(EPOCH FROM expires) AS expires FROM access_tokens WHERE token = $1',
 			[token],
 		);
 

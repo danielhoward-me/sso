@@ -14,6 +14,8 @@ export default function EmailAuthPage({searchParams}: SearchParamsProps) {
 
 	if (session.waitForAuthUser === null) {
 		redirect(redirectPath);
+	} else if (Date.now() > session.waitForAuthUser.authCodeExpires.getTime()) {
+		session.waitForAuthUser.generateAuthCode();
 	}
 
 	return (

@@ -1,6 +1,7 @@
 import {USER_AUTH_CODE_EXPIRES_MINUTES} from './../constants';
 import constructProfilePicture from './construct-profile-picture';
 import db from './database';
+import email, {EmailTemplate} from './email';
 
 import argon2 from 'argon2';
 import {createHash} from 'crypto';
@@ -36,10 +37,10 @@ export default class User {
 		this.username = rawUser.username;
 		this.email = rawUser.email;
 		this.profilePicture = rawUser.profile_picture;
-		this.created = new Date(rawUser.created);
-		this.lastUpdated = new Date(rawUser.last_updated);
+		this.created = new Date(parseInt(rawUser.created) * 1000);
+		this.lastUpdated = new Date(parseInt(rawUser.last_updated) * 1000);
 		this.authCode = rawUser.auth_code;
-		this.authCodeExpires = new Date(rawUser.auth_code_expires);
+		this.authCodeExpires = new Date(parseInt(rawUser.auth_code_expires) * 1000);
 
 		this.emailHash = createHash('md5').update(this.email).digest('hex');
 
@@ -87,6 +88,18 @@ export default class User {
 		await db.changeProfilePicture(this.id, profilePicture);
 	}
 
+	public async generateAuthCode() {
+		const authCode = User.makeAuthCode();
+
+		await db.setUserAuthCode(this.id, authCode, USER_AUTH_CODE_EXPIRES_MINUTES * 60);
+
+		email.sendTemplate(`${this.username} <${this.email}>`, EmailTemplate.ConfirmEmail, {
+			username: this.username,
+			expiryTime: USER_AUTH_CODE_EXPIRES_MINUTES,
+			confirmCode: authCode,
+		});
+	}
+
 	public static async idExists(id: string): Promise<boolean> {
 		return await db.entryExists('users', {field: 'id', value: id});
 	}
@@ -115,11 +128,15 @@ export default class User {
 		}
 
 		const hashedPassword = await argon2.hash(password);
-		const authCode = User.makeAuthCode();
 
-		await db.createUser(id, username, emailValue, hashedPassword, authCode, USER_AUTH_CODE_EXPIRES_MINUTES * 60);
+		await db.createUser(id, username, emailValue, hashedPassword);
 
-		return new User(id);
+		const user = new User(id);
+		await user.waitForLoad();
+
+		await user.generateAuthCode();
+
+		return user;
 	}
 
 	private static makeAuthCode(): string {

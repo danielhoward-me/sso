@@ -48,7 +48,7 @@ export default function ConfirmEmail({
 							<Text className="text-4xl">{confirmCode}</Text>
 						</Section>
 						<Text>
-							The Code will only be valid for the next {expiryTime} minutes
+							The code will only be valid for the next {expiryTime} minutes
 						</Text>
 						<Text className="text-gray-600 text-md">
 							If you didn't request this code, you can safely ignore this email
