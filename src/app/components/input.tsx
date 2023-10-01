@@ -8,7 +8,7 @@ import {useState} from 'react';
 import type {DetailedHTMLProps, InputHTMLAttributes} from 'react';
 
 interface TextInputProps extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
-	label: string;
+	label?: string;
 	error?: string;
 	labelLink?: InputLabelLink;
 }
@@ -27,18 +27,20 @@ export default function TextInput(props: TextInputProps) {
 
 	return (
 		<div className="text-left">
-			<div className="flex">
-				<label htmlFor={props.id} className="text-gray-800 dark:text-gray-300 text-md font-bold justify-start">
-					{props.label} {props.required && <span className="text-red-500">*</span>}
-				</label>
-				{props.labelLink && (
-					<div className="ml-auto text-sm">
-						<Link href={props.labelLink.href}>
-							{props.labelLink.text}
-						</Link>
-					</div>
-				)}
-			</div>
+			{props.label && (
+				<div className="flex">
+					<label htmlFor={props.id} className="text-gray-800 dark:text-gray-300 text-md font-bold justify-start">
+						{props.label} {props.required && <span className="text-red-500">*</span>}
+					</label>
+					{props.labelLink && (
+						<div className="ml-auto text-sm">
+							<Link href={props.labelLink.href}>
+								{props.labelLink.text}
+							</Link>
+						</div>
+					)}
+				</div>
+			)}
 			<div className="relative">
 				{props.type === 'password' && (
 					<div className="absolute right-2 top-1/2 -translate-y-[calc(50%-2px)] text-gray-800 w-8 h-8 cursor-pointer select-none" onClick={() => setPasswordShowing(!passwordShowing)}>

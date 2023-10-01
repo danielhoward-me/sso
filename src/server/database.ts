@@ -100,7 +100,7 @@ class Database {
 
 	public async getSession(sessionId: string): Promise<RawSession | undefined> {
 		const {rows} = await this.query<RawSession>(
-			'SELECT * FROM sessions WHERE id = $1',
+			'SELECT id, ip, expires, user_id, wait_for_auth_user_id FROM sessions WHERE id = $1',
 			[sessionId],
 		);
 
@@ -121,10 +121,11 @@ class Database {
 		);
 	}
 
-	public async updateSession(sessionId: string, userId: string | null) {
+	public async updateSession(sessionId: string, userId: string | null, waitForAuthUserId: string | null) {
+		console.log(userId, waitForAuthUserId);
 		await this.query(
-			'UPDATE sessions SET user_id = $1 WHERE id = $2',
-			[userId, sessionId],
+			'UPDATE sessions SET user_id = $1, wait_for_auth_user_id = $2 WHERE id = $3',
+			[userId, waitForAuthUserId, sessionId],
 		);
 	}
 

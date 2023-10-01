@@ -1,3 +1,6 @@
+import {USER_AUTH_CODE_EXPIRES_MINUTES} from './../../../constants';
+import email, {EmailTemplate} from './../../../server/email';
+import {saveSession} from './../../../server/session/session';
 import User from './../../../server/user';
 
 import {NextResponse} from 'next/server';
@@ -28,8 +31,15 @@ export async function POST(req: NextRequest) {
 	const user = await User.create(data.username, data.email, data.password);
 	await user.waitForLoad();
 
+	email.sendTemplate(`${user.username} <${user.email}>`, EmailTemplate.ConfirmEmail, {
+		username: user.username,
+		expiryTime: USER_AUTH_CODE_EXPIRES_MINUTES,
+		confirmCode: user.authCode,
+	});
+
+	saveSession(null, user.id);
+
 	return NextResponse.json<AccountDetailsApiResponse>({
 		successful: true,
-		userId: user.id,
 	});
 }

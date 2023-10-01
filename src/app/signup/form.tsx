@@ -12,9 +12,7 @@ import {useState, useRef} from 'react';
 import type {AccountDetailsApiResponse} from './../types.d';
 import type {FormEvent} from 'react';
 
-export default function Form({redirect}: {redirect: string}) {
-	const [waitingForAuthCode, setWaitingForAuthCode] = useState(false);
-
+export default function Form({emailAuthPath}: {emailAuthPath: string}) {
 	const [usernameError, setUsernameError] = useState('');
 	const [emailError, setEmailError] = useState('');
 
@@ -46,8 +44,7 @@ export default function Form({redirect}: {redirect: string}) {
 		try {
 			const createUserOutcome = await makeApiRequest<AccountDetailsApiResponse>('signup', validData);
 			if (createUserOutcome.successful) {
-				setWaitingForAuthCode(true);
-				console.log(createUserOutcome.userId);
+				window.location.href = emailAuthPath;
 				return;
 			} else {
 				if (createUserOutcome.usernameExists) {
@@ -66,26 +63,22 @@ export default function Form({redirect}: {redirect: string}) {
 	}
 
 	return (
-		(waitingForAuthCode ? (
-			<p>test</p>
-		) : (
-			<form className="max-w-lg mx-auto space-y-2 mt-6" onSubmit={onUserCreateSubmit} ref={formRef}>
-				<Fieldset title="Account Details">
-					<UserDetailsInputs usernameError={usernameError} emailError={emailError}/>
-					<br/>
-				</Fieldset>
+		<form className="max-w-lg mx-auto space-y-2 mt-6" onSubmit={onUserCreateSubmit} ref={formRef}>
+			<Fieldset title="Account Details">
+				<UserDetailsInputs usernameError={usernameError} emailError={emailError}/>
+				<br/>
+			</Fieldset>
 
-				<Fieldset title="Password">
-					<PasswordInputs passwordError={passwordError} confirmPasswordError={confirmPasswordError}/>
-					<br/>
-				</Fieldset>
+			<Fieldset title="Password">
+				<PasswordInputs passwordError={passwordError} confirmPasswordError={confirmPasswordError}/>
+				<br/>
+			</Fieldset>
 
-				{errorText && <p className="text-red-500 text-center mt-4">{errorText}</p>}
+			{errorText && <p className="text-red-500 text-center mt-4">{errorText}</p>}
 
-				<Button className="mx-auto !mt-4" type="submit" loading={buttonLoading}>
-					Create Account
-				</Button>
-			</form>
-		))
+			<Button className="mx-auto !mt-4" type="submit" loading={buttonLoading}>
+				Create Account
+			</Button>
+		</form>
 	);
 }

@@ -1,7 +1,6 @@
 import {USER_AUTH_CODE_EXPIRES_MINUTES} from './../constants';
 import constructProfilePicture from './construct-profile-picture';
 import db from './database';
-import email, {EmailTemplate} from './email';
 
 import argon2 from 'argon2';
 import {createHash} from 'crypto';
@@ -119,12 +118,6 @@ export default class User {
 		const authCode = User.makeAuthCode();
 
 		await db.createUser(id, username, emailValue, hashedPassword, authCode, USER_AUTH_CODE_EXPIRES_MINUTES * 60);
-
-		email.sendTemplate(`${username} <${emailValue}>`, EmailTemplate.ConfirmEmail, {
-			username,
-			expiryTime: USER_AUTH_CODE_EXPIRES_MINUTES,
-			confirmCode: authCode,
-		});
 
 		return new User(id);
 	}

@@ -25,7 +25,8 @@ CREATE TABLE sessions (
 	id UUID NOT NULL PRIMARY KEY,
 	ip INET NOT NULL,
 	expires TIMESTAMP NOT NULL,
-	user_id UUID REFERENCES users (id)
+	user_id UUID REFERENCES users (id),
+	wait_for_auth_user_id UUID REFERENCES users (id)
 );
 
 CREATE TABLE access_tokens (

@@ -23,14 +23,16 @@ export default function SignupPage({searchParams}: SearchParamsProps) {
 		redirect(redirectPath);
 	}
 
+	const linkQuery = `${getRedirectQueryForPage(redirectPath)}${searchParams.hidenavbar === undefined ? '' : '&hidenavbar'}`;
+
 	return (
 		<MiddleIsland>
 			<h1 className="text-6xl font-bold pb-2">Sign up for Your Account</h1>
-			<SignupForm redirect={redirectPath}/>
+			<SignupForm emailAuthPath={`/confirm-email${linkQuery}`}/>
 			<div className="block mt-5 leading-snug">
 				Already have an account?
 				<br/>
-				<Link href={`/login${getRedirectQueryForPage(redirectPath)}${searchParams.hidenavbar === undefined ? '' : '&hidenavbar'}`}>
+				<Link href={`/login${linkQuery}`}>
 					Login here
 				</Link>
 			</div>

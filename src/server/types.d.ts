@@ -5,9 +5,11 @@ export interface RawSession {
 	ip: string;
 	expires: string;
 	user_id: string | null;
+	wait_for_auth_user_id: string | null;
 }
 export interface Session<T = null> {
 	user: User | T;
+	waitForAuthUser: User | null;
 }
 
 export interface RawUser {

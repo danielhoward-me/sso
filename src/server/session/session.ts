@@ -60,6 +60,7 @@ async function createSession(ip: string): Promise<RawSession> {
 		ip,
 		expires: SESSION_COOKIE_MAX_AGE.toString(),
 		user_id: null,
+		wait_for_auth_user_id: null,
 	};
 }
 
@@ -67,12 +68,16 @@ async function processSession(rawSession?: RawSession): Promise<Session> {
 	const user = rawSession?.user_id ? new User(rawSession.user_id) : null;
 	await user?.waitForLoad();
 
+	const waitForAuthUser = rawSession?.wait_for_auth_user_id ? new User(rawSession.wait_for_auth_user_id) : null;
+	await waitForAuthUser?.waitForLoad();
+
 	return {
 		user,
+		waitForAuthUser,
 	};
 }
 
-export async function saveSession(userId: string | null): Promise<void> {
+export async function saveSession(userId: string | null, waitForAuthUserId: string | null = null): Promise<void> {
 	const sessionId = getSessionId();
-	await db.updateSession(sessionId, userId);
+	await db.updateSession(sessionId, userId, waitForAuthUserId);
 }
