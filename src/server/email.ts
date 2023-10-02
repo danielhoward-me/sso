@@ -22,6 +22,7 @@ const templateSubjects: Record<EmailTemplate, string> = {
 class Email {
 	transporter: Transporter<SMTPTransport.SentMessageInfo>;
 	optionsPromise: Promise<SMTPTransport.Options>;
+	useTestAccount = process.env.NODE_ENV !== 'production' && process.env.EMAIL_USE_ETHEREAL === 'true';
 
 	constructor() {
 		console.log('Creating mail transporter');
@@ -31,10 +32,10 @@ class Email {
 	}
 
 	private async createTransporter() {
-		this.optionsPromise = process.env.NODE_ENV === 'production' || process.env.EMAIL_USE_ETHEREAL !== 'true' ? (
-			Email.getOptions()
-		) : (
+		this.optionsPromise = this.useTestAccount ? (
 			Email.getTestAccountOptions()
+		) : (
+			Email.getOptions()
 		);
 
 		this.transporter = createTransport(await this.optionsPromise);
@@ -55,7 +56,7 @@ class Email {
 					return;
 				}
 
-				if (process.env.NODE_ENV !== 'production') {
+				if (this.useTestAccount) {
 					console.log(`Email sent to ${message.to}: ${info.messageId}`);
 					console.log(`Preview URL: ${getTestMessageUrl(info)}`);
 				}

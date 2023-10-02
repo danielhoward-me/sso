@@ -190,6 +190,13 @@ class Database {
 		);
 	}
 
+	public async clearUserAuthCode(userId: string) {
+		await this.query(
+			`UPDATE users SET auth_code = NULL, auth_code_expires = NULL WHERE id = $1`,
+			[userId],
+		);
+	}
+
 	public async createAccessToken(token: string, userId: string, target: string, expiresSeconds: number) {
 		await this.query(
 			`INSERT INTO access_tokens (token, user_id, target, expires) VALUES ($1, $2, $3, NOW() + INTERVAL '${expiresSeconds} SECONDS')`,

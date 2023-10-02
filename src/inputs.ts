@@ -137,6 +137,21 @@ export const profilePictureValidationData: ValidationData = {
 		},
 	},
 };
+export const confirmEmailValidationData: ValidationData = {
+	inputs: {
+		authCode: {
+			type: 'string',
+			required: true,
+			patterns: [
+				{
+					pattern: /^[A-Z0-9]{3}-[A-Z0-9]{3}$/,
+					message: 'should be in the format 000-000',
+				},
+			],
+		},
+	},
+	capitalise: true,
+};
 
 interface ValidationDataMapEntry {
 	validationData: ValidationData;
@@ -169,5 +184,8 @@ export const apiValidationDataMap: {[key: string]: ValidationDataMapEntry} = {
 	'user/profile-picture': {
 		validationData: profilePictureValidationData,
 		requiresAccount: true,
+	},
+	'confirm-email': {
+		validationData: confirmEmailValidationData,
 	},
 };

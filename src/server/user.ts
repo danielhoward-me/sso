@@ -60,11 +60,11 @@ export default class User {
 		return constructProfilePicture(type, this.emailHash);
 	}
 
-	public async usernameAvailable(username: string): Promise<boolean> {
+	public async newUsernameExists(username: string): Promise<boolean> {
 		return await db.entryExists('users', {field: 'username', value: username}, {field: 'id', negate: true, value: this.id});
 	}
 
-	public async emailAvailable(email: string): Promise<boolean> {
+	public async newEmailExists(email: string): Promise<boolean> {
 		return await db.entryExists('users', {field: 'email', value: email}, {field: 'id', negate: true, value: this.id});
 	}
 
@@ -98,6 +98,21 @@ export default class User {
 			expiryTime: USER_AUTH_CODE_EXPIRES_MINUTES,
 			confirmCode: authCode,
 		});
+	}
+
+	public async isCorrectAuthCode(authCode: string): Promise<boolean> {
+		if (!this.authCode) return false;
+		if (Date.now() > this.authCodeExpires.getTime()) {
+			this.generateAuthCode();
+			return false;
+		}
+
+		const correct = authCode === this.authCode;
+		if (correct) {
+			await db.clearUserAuthCode(this.id);
+		}
+
+		return correct;
 	}
 
 	public static async idExists(id: string): Promise<boolean> {

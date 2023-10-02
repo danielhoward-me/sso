@@ -15,24 +15,18 @@ export async function POST(req: NextRequest) {
 
 	const data = await req.json() as RequestBody;
 
-	let response: AccountDetailsApiResponse = {successful: true};
+	const usernameExists = await user.newUsernameExists(data.username);
+	const emailExists = await user.newEmailExists(data.email);
 
-	if (await user.usernameAvailable(data.username)) {
-		response = {
-			...response,
+	if (usernameExists || emailExists) {
+		return NextResponse.json<AccountDetailsApiResponse>({
 			successful: false,
-			usernameExists: true,
-		};
-	}
-	if (await user.emailAvailable(data.email)) {
-		response = {
-			...response,
-			successful: false,
-			emailExists: true,
-		};
+			usernameExists,
+			emailExists,
+		});
 	}
 
-	if (response.successful) await user.editDetails(data.username, data.email);
+	await user.editDetails(data.username, data.email);
 
-	return NextResponse.json(response);
+	return NextResponse.json<AccountDetailsApiResponse>({successful: true});
 }

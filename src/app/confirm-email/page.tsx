@@ -21,7 +21,7 @@ export default function EmailAuthPage({searchParams}: SearchParamsProps) {
 	return (
 		<MiddleIsland>
 			<h1 className="text-6xl font-bold pb-2">Confirm your email</h1>
-			<ConfirmEmailForm email={session.waitForAuthUser.email}/>
+			<ConfirmEmailForm email={session.waitForAuthUser.email} redirect={redirectPath}/>
 		</MiddleIsland>
 	);
 }

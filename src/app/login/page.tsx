@@ -33,7 +33,7 @@ export default function LoginPage({searchParams}: SearchParamsProps) {
 			<div className="block mt-5 leading-snug">
 				Don't have an account?
 				<br/>
-				<Link href={`/signup${getRedirectQueryForPage(redirectPath)}`}>
+				<Link href={`/signup${linkQuery}`}>
 					Create one here
 				</Link>
 			</div>
