@@ -2,13 +2,21 @@
 
 import TextInput from './../components/input';
 
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 import type {ChangeEvent, RefObject} from 'react';
 
 export default function ConfirmEmailForm({email}: {email: string}) {
 	const codeInputs = new Array(6).fill(null).map(() => useRef<HTMLInputElement>(null));
 	const codeValues = new Array(6).fill(null).map(() => useState(''));
+
+	useEffect(() => {
+		codeInputs.forEach(({current: input}) => {
+			input?.addEventListener('paste', (ev) => {
+				const value = ev.clipboardData?.getData('text');
+			});
+		});
+	});
 
 	function onInputChange(i: number) {
 		return (ev: ChangeEvent<HTMLInputElement>) => {

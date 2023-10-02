@@ -31,7 +31,7 @@ async function makeSessionRequest(url: NextURL, body: SessionApiRequestBody): Pr
 	sessionId: string;
 	sessionHasUser: boolean;
 }> {
-	const request = await fetch(`http://localhost:${url.port}/api/session`, {
+	const request = await fetch(`http://127.0.0.1:${url.port}/api/session`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

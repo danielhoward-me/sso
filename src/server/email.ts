@@ -31,8 +31,8 @@ class Email {
 	}
 
 	private async createTransporter() {
-		this.optionsPromise = process.env.NODE_ENV === 'production' ? (
-			Email.getProductionOptions()
+		this.optionsPromise = process.env.NODE_ENV === 'production' || process.env.EMAIL_USE_ETHEREAL !== 'true' ? (
+			Email.getOptions()
 		) : (
 			Email.getTestAccountOptions()
 		);
@@ -95,7 +95,7 @@ class Email {
 		});
 	}
 
-	private static async getProductionOptions(): Promise<SMTPTransport.Options> {
+	private static async getOptions(): Promise<SMTPTransport.Options> {
 		return {
 			host: process.env.SMTP_SERVER_HOST,
 			port: parseInt(process.env.SMTP_SERVER_PORT || ''),
