@@ -22,7 +22,7 @@ const templateSubjects: Record<EmailTemplate, string> = {
 class Email {
 	transporter: Transporter<SMTPTransport.SentMessageInfo>;
 	optionsPromise: Promise<SMTPTransport.Options>;
-	useTestAccount = process.env.NODE_ENV !== 'production' && process.env.EMAIL_USE_ETHEREAL === 'true';
+	useTestAccount = process.env.EMAIL_USE_ETHEREAL === 'true';
 
 	constructor() {
 		console.log('Creating mail transporter');
