@@ -1,4 +1,4 @@
-import {USER_AUTH_CODE_EXPIRES_MINUTES} from './../constants';
+import {EMAIL_AUTH_CODE_EXPIRES_MINUTES, RESET_PASSWORD_TOKEN_EXPIRES_MINUTES} from './../constants';
 import constructProfilePicture from './construct-profile-picture';
 import db from './database';
 import email, {EmailTemplate} from './email';
@@ -22,6 +22,8 @@ export default class User {
 	emailHash: string;
 	authCode: string;
 	authCodeExpires: Date;
+	passwordResetToken: string;
+	passwordResetTokenExpires: Date;
 
 	constructor(id: string) {
 		this.id = id;
@@ -41,13 +43,22 @@ export default class User {
 		this.lastUpdated = new Date(parseInt(rawUser.last_updated) * 1000);
 		this.authCode = rawUser.auth_code;
 		this.authCodeExpires = new Date(parseInt(rawUser.auth_code_expires) * 1000);
+		this.passwordResetToken = rawUser.password_reset_token;
+		this.passwordResetTokenExpires = new Date(parseInt(rawUser.password_reset_token_expires) * 1000);
 
 		this.emailHash = createHash('md5').update(this.email).digest('hex');
 
 		this.loaded = true;
 	}
 
-	public async waitForLoad() {
+	// This is required to avoid waitForLoad being run manually every time
+	public static async get(userId: string): Promise<User> {
+		const user = new User(userId);
+		await user.waitForLoad();
+		return user;
+	}
+
+	private async waitForLoad() {
 		if (this.loaded || !this.loadPromise) return;
 
 		await this.loadPromise;
@@ -91,11 +102,11 @@ export default class User {
 	public async generateAuthCode() {
 		const authCode = User.makeAuthCode();
 
-		await db.setUserAuthCode(this.id, authCode, USER_AUTH_CODE_EXPIRES_MINUTES * 60);
+		await db.setUserAuthCode(this.id, authCode, EMAIL_AUTH_CODE_EXPIRES_MINUTES * 60);
 
 		email.sendTemplate(`${this.username} <${this.email}>`, EmailTemplate.ConfirmEmail, {
 			username: this.username,
-			expiryTime: USER_AUTH_CODE_EXPIRES_MINUTES,
+			expiryTime: EMAIL_AUTH_CODE_EXPIRES_MINUTES,
 			confirmCode: authCode,
 		});
 	}
@@ -115,6 +126,27 @@ export default class User {
 		return correct;
 	}
 
+	public async sendPasswordResetEmail() {
+		const resetToken = uuid();
+
+		await db.setUserPasswordResetToken(this.id, resetToken, RESET_PASSWORD_TOKEN_EXPIRES_MINUTES * 60);
+
+		const isDev = process.env.NODE_ENV === 'development';
+		email.sendTemplate(`${this.username} <${this.email}>`, EmailTemplate.ResetPassword, {
+			username: this.username,
+			expiryTime: RESET_PASSWORD_TOKEN_EXPIRES_MINUTES,
+			resetPasswordLink: `http${isDev ? '' : 's'}://${isDev ? 'local' : 'sso'}.danielhoward.me${isDev ? ':3000' : ''}/reset-password?token=${resetToken}`,
+		});
+	}
+
+	public static async sendPasswordResetEmail(email: string) {
+		const userId = await db.getUserId(email);
+		if (!userId) return;
+
+		const user = await User.get(userId);
+		await user.sendPasswordResetEmail();
+	}
+
 	public static async idExists(id: string): Promise<boolean> {
 		return await db.entryExists('users', {field: 'id', value: id});
 	}
@@ -127,12 +159,11 @@ export default class User {
 		return await db.entryExists('users', {field: 'email', value: email});
 	}
 
-	public static async get(email: string, password: string): Promise<User | null> {
+	public static async checkCredentials(email: string, password: string): Promise<User | null> {
 		const userId = await db.getUserId(email);
 		if (!userId) return null;
 
-		const user = new User(userId);
-		await user.waitForLoad();
+		const user = await User.get(userId);
 		return (await user.isPasswordCorrect(password)) ? user : null;
 	}
 
@@ -146,8 +177,7 @@ export default class User {
 
 		await db.createUser(id, username, emailValue, hashedPassword);
 
-		const user = new User(id);
-		await user.waitForLoad();
+		const user = await User.get(id);
 
 		await user.generateAuthCode();
 

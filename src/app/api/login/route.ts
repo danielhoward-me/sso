@@ -13,7 +13,7 @@ interface RequestBody {
 
 export async function POST(req: NextRequest) {
 	const data = await req.json() as RequestBody;
-	const user = await User.get(data.email, data.password);
+	const user = await User.checkCredentials(data.email, data.password);
 
 	let response: LoginApiResponse = {
 		successful: true,

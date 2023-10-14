@@ -68,7 +68,7 @@ export default function LoginForm({redirect, linkQuery}: {redirect: string, link
 			/>
 			<TextInput
 				label="Password"
-				labelLink={{href: `/forgot-password${linkQuery}`, text: 'Forgot password?'}}
+				labelLink={{href: `/reset-password${linkQuery}`, text: 'Forgot password?'}}
 				id="password"
 				name="password"
 				placeholder="Password"

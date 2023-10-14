@@ -37,8 +37,7 @@ export async function getAccessTokenData(token: string): Promise<AccessTokenData
 		return null;
 	}
 
-	const user = new User(tokenData.user_id);
-	await user.waitForLoad();
+	const user = await User.get(tokenData.user_id);
 
 	return {
 		user,

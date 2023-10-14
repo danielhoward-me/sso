@@ -17,7 +17,9 @@ CREATE TABLE users (
 	created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	auth_code VARCHAR(7),
-	auth_code_expires TIMESTAMP
+	auth_code_expires TIMESTAMP,
+	password_reset_token UUID,
+	password_reset_token_expires TIMESTAMP
 );
 CREATE TRIGGER update_user_last_updated BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_last_updated_column();
 

@@ -21,6 +21,8 @@ export interface RawUser {
 	last_updated: string;
 	auth_code: string;
 	auth_code_expires: string;
+	password_reset_token: string;
+	password_reset_token_expires: string;
 }
 
 export interface RawAccessTokenData {

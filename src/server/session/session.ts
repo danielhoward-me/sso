@@ -65,11 +65,8 @@ async function createSession(ip: string): Promise<RawSession> {
 }
 
 async function processSession(rawSession?: RawSession): Promise<Session> {
-	const user = rawSession?.user_id ? new User(rawSession.user_id) : null;
-	await user?.waitForLoad();
-
-	const waitForAuthUser = rawSession?.wait_for_auth_user_id ? new User(rawSession.wait_for_auth_user_id) : null;
-	await waitForAuthUser?.waitForLoad();
+	const user = rawSession?.user_id ? await User.get(rawSession.user_id) : null;
+	const waitForAuthUser = rawSession?.wait_for_auth_user_id ? await User.get(rawSession.wait_for_auth_user_id) : null;
 
 	return {
 		user,

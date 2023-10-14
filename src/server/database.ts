@@ -130,7 +130,20 @@ class Database {
 
 	public async getUser(userId: string): Promise<RawUser | undefined> {
 		const {rows} = await this.query<RawUser>(
-			'SELECT id, username, email, profile_picture, EXTRACT(EPOCH FROM created) AS created, EXTRACT(EPOCH FROM last_updated) AS last_updated, auth_code, EXTRACT(EPOCH FROM auth_code_expires) AS auth_code_expires FROM users WHERE id = $1',
+			`
+				SELECT
+					id,
+					username,
+					email,
+					profile_picture,
+					EXTRACT(EPOCH FROM created) AS created,
+					EXTRACT(EPOCH FROM last_updated) AS last_updated,
+					auth_code,
+					EXTRACT(EPOCH FROM auth_code_expires) AS auth_code_expires,
+					password_reset_token,
+					EXTRACT(EPOCH FROM password_reset_token_expires) AS password_reset_token_expires
+				FROM users WHERE id = $1
+			`,
 			[userId],
 		);
 
@@ -194,6 +207,13 @@ class Database {
 		await this.query(
 			`UPDATE users SET auth_code = NULL, auth_code_expires = NULL WHERE id = $1`,
 			[userId],
+		);
+	}
+
+	public async setUserPasswordResetToken(userId: string, token: string, expiry: number) {
+		await this.query(
+			`UPDATE users SET password_reset_token = $1, password_reset_token_expires = NOW() + INTERVAL '${expiry} SECONDS' WHERE id = $2`,
+			[token, userId],
 		);
 	}
 

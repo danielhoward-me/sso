@@ -13,7 +13,7 @@ export async function middleware(req: NextRequest) {
 	const hideNavbar = hideNavbarPaths.includes(req.nextUrl.pathname) || (
 		req.nextUrl.searchParams.has('hidenavbar') && (
 			([
-				'/login', '/signup', '/confirm-email',
+				'/login', '/signup', '/confirm-email', '/reset-password',
 			]).includes(req.nextUrl.pathname)
 		)
 	);

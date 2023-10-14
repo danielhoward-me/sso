@@ -2,7 +2,7 @@ import ConfirmEmail, {subject as confirmEmailSubject} from './../../emails/confi
 import ResetPassword, {subject as resetPasswordSubject} from './../../emails/reset-password';
 
 import {render} from '@react-email/render';
-import {createTransport, createTestAccount, getTestMessageUrl} from 'nodemailer';
+import {createTransport, getTestMessageUrl} from 'nodemailer';
 
 import type {Props as ConfirmEmailProps} from './../../emails/confirm-email';
 import type {Props as ResetPasswordProps} from './../../emails/reset-password';
@@ -20,43 +20,33 @@ const templateSubjects: Record<EmailTemplate, string> = {
 };
 
 class Email {
-	transporter: Transporter<SMTPTransport.SentMessageInfo>;
-	optionsPromise: Promise<SMTPTransport.Options>;
-	useTestAccount = process.env.EMAIL_USE_ETHEREAL === 'true';
+	transporter: Transporter<SMTPTransport.SentMessageInfo> | undefined;
+	options: SMTPTransport.Options;
 
 	constructor() {
 		console.log('Creating mail transporter');
-		this.createTransporter()
-			.then(() => console.log('Successfully created mail transporter'))
-			.catch((err) => console.error(`Failed to create transporter: ${err.message}`));
-	}
-
-	private async createTransporter() {
-		this.optionsPromise = this.useTestAccount ? (
-			Email.getTestAccountOptions()
-		) : (
-			Email.getOptions()
-		);
-
-		this.transporter = createTransport(await this.optionsPromise);
-	}
-
-	private async waitForOptions() {
-		if (this.transporter || !this.optionsPromise) return;
-		await this.optionsPromise;
+		try {
+			this.options = Email.getOptions();
+			this.transporter = createTransport(this.options);
+			console.log('Successfully created mail transporter');
+		} catch (err) {
+			console.error(`Failed to create transporter: ${err.message}`);
+			this.transporter = undefined;
+		}
 	}
 
 	public async send(message: Mail.Options): Promise<SMTPTransport.SentMessageInfo> {
-		await this.waitForOptions();
-
 		return new Promise((resolve, reject) => {
+			if (!this.transporter) return reject(new Error('No mail transporter configured'));
+
 			this.transporter.sendMail(message, (err, info) => {
 				if (err) {
 					reject(err);
 					return;
 				}
 
-				if (this.useTestAccount) {
+				// A testing email account can be generated at ethereal.email
+				if (this.options.host === 'smtp.ethereal.email') {
 					console.log(`Email sent to ${message.to}: ${info.messageId}`);
 					console.log(`Preview URL: ${getTestMessageUrl(info)}`);
 				}
@@ -69,8 +59,6 @@ class Email {
 	public async sendTemplate(to: string, type: EmailTemplate.ConfirmEmail, props: Parameters<typeof ConfirmEmail>[0]): Promise<void>
 	public async sendTemplate(to: string, type: EmailTemplate.ResetPassword, props: Parameters<typeof ResetPassword>[0]): Promise<void>
 	public async sendTemplate(to: string, type: EmailTemplate, props: unknown): Promise<void> {
-		await this.waitForOptions();
-
 		if (!this.transporter) {
 			console.log('No mail has been sent due to there not being a transporter');
 			console.log(`A ${type} email would have been sent with the following parameters: `, props);
@@ -96,7 +84,11 @@ class Email {
 		});
 	}
 
-	private static async getOptions(): Promise<SMTPTransport.Options> {
+	private static getOptions(): SMTPTransport.Options {
+		if (!process.env.SMTP_SERVER_HOST) {
+			throw new Error('No smtp server provided');
+		}
+
 		return {
 			host: process.env.SMTP_SERVER_HOST,
 			port: parseInt(process.env.SMTP_SERVER_PORT || ''),
@@ -106,28 +98,6 @@ class Email {
 				pass: process.env.SMTP_SERVER_PASS,
 			},
 		};
-	}
-
-	private static getTestAccountOptions(): Promise<SMTPTransport.Options> {
-		return new Promise((resolve, reject) => {
-			if (process.env.NODE_ENV === 'production') reject(new Error('Test email account cannot be used in production'));
-
-			createTestAccount((err, account) => {
-				if (err) reject(new Error('Failed to create ann email testing account: ' + err.message));
-
-				console.log('Testing account created');
-
-				resolve({
-					host: account.smtp.host,
-					port: account.smtp.port,
-					secure: account.smtp.secure,
-					auth: {
-						user: account.user,
-						pass: account.pass,
-					},
-				});
-			});
-		});
 	}
 }
 

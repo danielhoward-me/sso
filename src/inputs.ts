@@ -152,6 +152,17 @@ export const confirmEmailValidationData: ValidationData = {
 	},
 	capitalise: true,
 };
+export const resetPasswordEmailValidationData: ValidationData = {
+	inputs: {
+		email: {
+			type: 'string',
+			required: true,
+			maxLength: 256,
+			patterns: [emailValidationPattern],
+		},
+	},
+	capitalise: true,
+};
 
 interface ValidationDataMapEntry {
 	validationData: ValidationData;
@@ -187,5 +198,8 @@ export const apiValidationDataMap: {[key: string]: ValidationDataMapEntry} = {
 	},
 	'confirm-email': {
 		validationData: confirmEmailValidationData,
+	},
+	'reset-password-email': {
+		validationData: resetPasswordEmailValidationData,
 	},
 };
