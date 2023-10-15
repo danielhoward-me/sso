@@ -141,7 +141,8 @@ class Database {
 					auth_code,
 					EXTRACT(EPOCH FROM auth_code_expires) AS auth_code_expires,
 					password_reset_token,
-					EXTRACT(EPOCH FROM password_reset_token_expires) AS password_reset_token_expires
+					EXTRACT(EPOCH FROM password_reset_token_expires) AS password_reset_token_expires,
+					admin
 				FROM users WHERE id = $1
 			`,
 			[userId],

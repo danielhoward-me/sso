@@ -24,6 +24,7 @@ export default class User {
 	authCodeExpires: Date;
 	passwordResetToken: string;
 	passwordResetTokenExpires: Date;
+	admin: boolean;
 
 	constructor(id: string) {
 		this.id = id;
@@ -45,6 +46,7 @@ export default class User {
 		this.authCodeExpires = new Date(parseInt(rawUser.auth_code_expires) * 1000);
 		this.passwordResetToken = rawUser.password_reset_token;
 		this.passwordResetTokenExpires = new Date(parseInt(rawUser.password_reset_token_expires) * 1000);
+		this.admin = rawUser.admin;
 
 		this.emailHash = createHash('md5').update(this.email).digest('hex');
 

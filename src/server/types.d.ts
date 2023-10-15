@@ -23,6 +23,7 @@ export interface RawUser {
 	auth_code_expires: string;
 	password_reset_token: string;
 	password_reset_token_expires: string;
+	admin: boolean;
 }
 
 export interface RawAccessTokenData {

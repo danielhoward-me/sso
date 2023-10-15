@@ -21,5 +21,6 @@ export async function GET(req: NextRequest) {
 		username: tokenData.user.username,
 		email: tokenData.user.email,
 		profilePicture: tokenData.user.getProfilePictureUrl(),
+		admin: tokenData.user.admin,
 	});
 }
