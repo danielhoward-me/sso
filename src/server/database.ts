@@ -218,6 +218,22 @@ class Database {
 		);
 	}
 
+	public async getUserWithPasswordResetToken(token: string): Promise<string | undefined> {
+		const {rows} = await this.query(
+			`SELECT id FROM users WHERE password_reset_token = $1`,
+			[token],
+		);
+
+		return rows[0]?.id;
+	}
+
+	public async deletePasswordResetToken(userId: string) {
+		await this.query(
+			`UPDATE users SET password_reset_token = NULL, password_reset_token_expires = NULL WHERE id = $1`,
+			[userId],
+		);
+	}
+
 	public async createAccessToken(token: string, userId: string, target: string, expiresSeconds: number) {
 		await this.query(
 			`INSERT INTO access_tokens (token, user_id, target, expires) VALUES ($1, $2, $3, NOW() + INTERVAL '${expiresSeconds} SECONDS')`,

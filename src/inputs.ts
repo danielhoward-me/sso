@@ -163,6 +163,16 @@ export const resetPasswordEmailValidationData: ValidationData = {
 	},
 	capitalise: true,
 };
+export const resetPasswordValidationData: ValidationData = {
+	inputs: {
+		...passwordValidationInputs,
+		token: {
+			type: 'string',
+			required: true,
+		},
+	},
+	capitalise: true,
+};
 
 interface ValidationDataMapEntry {
 	validationData: ValidationData;
@@ -201,5 +211,8 @@ export const apiValidationDataMap: {[key: string]: ValidationDataMapEntry} = {
 	},
 	'reset-password-email': {
 		validationData: resetPasswordEmailValidationData,
+	},
+	'reset-password': {
+		validationData: resetPasswordValidationData,
 	},
 };

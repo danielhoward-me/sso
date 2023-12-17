@@ -29,6 +29,7 @@ export default function Form({emailAuthPath}: {emailAuthPath: string}) {
 		e.preventDefault();
 
 		setButtonLoading(true);
+		setErrorText('');
 
 		const validData = runValidation(signupPageValidationData, {
 			username: setUsernameError,

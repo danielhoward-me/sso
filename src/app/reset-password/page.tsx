@@ -1,4 +1,5 @@
 import {getSession} from './../../server/session';
+import User from './../../server/user';
 import MiddleIsland from './../components/middle-island';
 import EmailForm from './email-form';
 import PasswordForm from './password-form';
@@ -13,14 +14,20 @@ export const metadata: Metadata = {
 	description: 'Reset Your Password to access and save your data across all of my services',
 };
 
-export default function LoginPage({searchParams}: SearchParamsProps) {
+export default async function ResetPasswordPage({searchParams}: SearchParamsProps) {
 	const session = getSession();
+	if (session.user || session.waitForAuthUser) {
+		redirect('/');
+	}
 
 	const tokenGiven = typeof searchParams.token === 'string';
 
-	if (!tokenGiven) {
-		if (session.user || session.waitForAuthUser) {
-			redirect('/');
+	if (tokenGiven) {
+		const token = searchParams.token as string;
+		const user = await User.getUserWithPasswordResetToken(token);
+
+		if (!user) {
+			redirect('/reset-password');
 		}
 	}
 

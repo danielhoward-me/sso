@@ -141,12 +141,32 @@ export default class User {
 		});
 	}
 
+	public async deletePasswordResetToken() {
+		await db.deletePasswordResetToken(this.id);
+
+		this.passwordResetToken = '';
+		this.passwordResetTokenExpires = new Date(0);
+	}
+
 	public static async sendPasswordResetEmail(email: string) {
 		const userId = await db.getUserId(email);
 		if (!userId) return;
 
 		const user = await User.get(userId);
 		await user.sendPasswordResetEmail();
+	}
+
+	public static async getUserWithPasswordResetToken(token: string): Promise<User | undefined> {
+		const userId = await db.getUserWithPasswordResetToken(token);
+		if (!userId) return undefined;
+
+		const user = await User.get(userId);
+		if (Date.now() > user.passwordResetTokenExpires.getTime()) {
+			user.deletePasswordResetToken();
+			return undefined;
+		}
+
+		return user;
 	}
 
 	public static async idExists(id: string): Promise<boolean> {

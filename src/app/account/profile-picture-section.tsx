@@ -114,7 +114,7 @@ export default function ProfilePictureSection({type, emailHash: initEmailHash}: 
 											on <Link href="https://gravatar.com/" target="_blank">gravatar</Link> using
 											the same email that you have used here
 										</p>
-										<Link href="https://en.gravatar.com/support/activating-your-account/" target="_blank">Learn More</Link>
+										<Link href="https://support.gravatar.com/basic/account-signup/" target="_blank">Learn More</Link>
 									</div>
 								) : (
 									<Image
