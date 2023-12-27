@@ -160,6 +160,15 @@ class Database {
 		return rows[0]?.id;
 	}
 
+	public async getUserIdFromUsername(username: string): Promise<string | undefined> {
+		const {rows} = await this.query<{id: string}>(
+			`SELECT id FROM users WHERE username = $1`,
+			[username],
+		);
+
+		return rows[0]?.id;
+	}
+
 	public async getUserPassword(userId: string): Promise<string | undefined> {
 		const {rows} = await this.query<{password: string}>(
 			`SELECT password FROM users WHERE id = $1`,

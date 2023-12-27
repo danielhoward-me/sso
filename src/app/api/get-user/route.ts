@@ -9,6 +9,7 @@ import type {NextRequest} from 'next/server';
 
 interface RequestBody {
 	id: string;
+	username: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -22,17 +23,36 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({error: 'Incorrect Access Token'}, {status: 401});
 	}
 
-	const data = await req.json() as RequestBody;
-
-	const exists = await User.idExists(data.id);
-	if (!exists) {
-		return NextResponse.json<BasicApiResponse>({successful: false});
+	if (!tokenData.user.admin) {
+		return NextResponse.json({error: 'Unauthorised'}, {status: 403});
 	}
 
-	const user = await User.get(data.id);
+	const data = await req.json() as RequestBody;
+
+	let id: string;
+
+	if (data.id) {
+		const exists = await User.idExists(data.id);
+		if (!exists) {
+			return NextResponse.json<BasicApiResponse>({successful: false});
+		}
+		id = data.id;
+	} else if (data.username) {
+		const exists = await User.usernameExists(data.username);
+		if (!exists) {
+			return NextResponse.json<BasicApiResponse>({successful: false});
+		}
+
+		id = await User.getIdFromUsername(data.username);
+	} else {
+		return NextResponse.json({error: 'Please provide id or username'}, {status: 400});
+	}
+
+	const user = await User.get(id);
 
 	return NextResponse.json({
 		successful: true,
+		id: user.id,
 		username: user.username,
 		profilePicture: user.getProfilePictureUrl(),
 	});

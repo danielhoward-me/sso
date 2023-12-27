@@ -222,4 +222,14 @@ export default class User {
 
 		return out;
 	}
+
+	public static async getIdFromUsername(username: string): Promise<string> {
+		const id = await db.getUserIdFromUsername(username);
+
+		if (!id) {
+			throw new Error(`No user exists with username ${username}`);
+		}
+
+		return id;
+	}
 }

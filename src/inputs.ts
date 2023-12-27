@@ -177,7 +177,11 @@ export const getUserValidationData: ValidationData = {
 	inputs: {
 		id: {
 			type: 'string',
-			required: true,
+			required: false,
+		},
+		username: {
+			type: 'string',
+			required: false,
 		},
 	},
 };
