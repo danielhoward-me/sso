@@ -26,6 +26,5 @@ export async function POST(req: NextRequest) {
 		response = {successful: false};
 	}
 
-
 	return NextResponse.json(response);
 }

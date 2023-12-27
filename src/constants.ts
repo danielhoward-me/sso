@@ -46,4 +46,5 @@ export const hideNavbarPaths: string[] = [
 export const noSessionPaths: string[] = [
 	'/api/session',
 	'/api/oauth2/account',
+	'/api/get-user',
 ];
