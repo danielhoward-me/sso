@@ -105,10 +105,6 @@ export function NavbarContent({
 			href: '/',
 		},
 		{
-			name: 'About',
-			href: '/about',
-		},
-		{
 			name: 'GitHub',
 			href: 'https://github.com/danielhoward-me/sso',
 			external: true,
