@@ -46,6 +46,7 @@
 			{
 				"patterns": ["../*", "*types"]
 			}
-		]
+		],
+		"linesbreak-style": "off"
 	}
 }
