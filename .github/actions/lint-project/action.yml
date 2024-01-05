@@ -10,7 +10,7 @@ runs:
       run: npm install -g yarn
     - name: Install Dependencies
       shell: bash
-      run: yarn install --production --frozen-lockfile
+      run: yarn install --frozen-lockfile
     - name: Lint Project
       shell: bash
       run: yarn lint

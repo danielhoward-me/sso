@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Build Project
+      - name: Lint Project
         uses: ./.github/actions/lint-project
 
   build:
