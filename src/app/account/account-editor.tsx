@@ -6,7 +6,7 @@ import AccountDetailsSection from './account-details-section';
 import PasswordSection from './password-section';
 import ProfilePictureSection from './profile-picture-section';
 
-import type {UserDetailsValues} from './../utils/get-user-detailsValues';
+import type {UserDetailsValues} from './../utils/get-user-details-values';
 
 export default function AccountEditor({user}: {user: UserDetailsValues}) {
 	return (

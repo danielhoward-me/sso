@@ -1,5 +1,5 @@
 import {hideNavbarPaths} from './constants';
-import {loadSession} from './server/session/sessionApi';
+import {loadSession} from './server/session/session-api';
 import {validateApiRequest} from './validate-api-request';
 
 import {NextResponse} from 'next/server';

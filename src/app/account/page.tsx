@@ -1,6 +1,6 @@
 import {getSession} from './../../server/session';
 import {getRedirectQueryForPage} from './../utils/get-redirect';
-import getUserDetailsValues from './../utils/get-user-detailsValues';
+import getUserDetailsValues from './../utils/get-user-details-values';
 import AccountEditor from './account-editor';
 
 import {redirect} from 'next/navigation';
